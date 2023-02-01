@@ -22,9 +22,8 @@ app.use(
     limit: "20mb",
   })
 );
-
-async function responder_gmail(){
-  const response = await openai.createCompletion({
+function responder_gmail(){
+  const response =  openai.createCompletion({
   model: "text-davinci-003",
   prompt: `Q:Como accedo a Gmail
            A:`,
