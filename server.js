@@ -2,9 +2,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { Configuration, OpenAIApi } = require("openai");
 const app = express();
-const {WebhookClient} = require('dialogflow-fulfillment');
+const { WebhookClient } = require('dialogflow-fulfillment');
 const configuration = new Configuration({
-  apiKey:'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',
+  apiKey: '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',
 });
 const openai = new OpenAIApi(configuration);
 const port = process.env.PORT || 3000;
@@ -22,30 +22,33 @@ app.use(
     limit: "20mb",
   })
 );
-function responder_gmail(){
-  const response =  openai.createCompletion({
-  model: "text-davinci-003",
-  prompt: `Q:Como accedo a Gmail
+
+async function responder_gmail() {
+  const response = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: `Q:Como accedo a Gmail
            A:`,
-  temperature: 0,
-  max_tokens: 100,
-  top_p: 1,
-  frequency_penalty: 0,
-  presence_penalty: 0,
-  stop: ["Q:"],
-  
-});
-return(response.data.choices[0].text)
+    temperature: 0,
+    max_tokens: 100,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    stop: ["Q:"],
+
+  });
+  return (response.data.choices[0].text)
 }
+
 
 app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
 app.post("/webhook", express.json(), (req, res) => {
-  const agent = new WebhookClient({ request:req, response:res });
+
+  const agent = new WebhookClient({ request: req, response: res });
   console.log('Dialogflow Request headers: ' + JSON.stringify(req.headers));
   console.log('Dialogflow Request body: ' + JSON.stringify(req.body));
-  
+
   function welcome(agent) {
     agent.add(`Welcome to my agent!`);
   }
@@ -53,12 +56,15 @@ app.post("/webhook", express.json(), (req, res) => {
     agent.add(`I didn't understand`);
     agent.add(`I'm sorry, can you try again?`);
   }
+
   function PruebaWeb(agent) {
-    let salida = setTimeout(responder_gmail(),2000);
-    console.log('salida: '+salida)
-    let salida2= 'respuesta_ de web'+salida
-    agent.add(salida2);
+    responder_gmail().then(function (result) {
+      console.log('salida: ' + result)
+      let salida2 = 'respuesta_ de web' + result
+      agent.add(salida2);
+    })
   }
+
   let intentMap = new Map();
   intentMap.set('PruebaWeb', PruebaWeb);
   intentMap.set('Default Welcome Intent', welcome);
