@@ -58,19 +58,21 @@ app.post("/webhook", express.json(), (req, res) => {
   }
 
   function PruebaWeb(agent) {
+    let respuesta='';
     responder_gmail().then(function (result) {
       console.log('salida: ' + result)
-      let salida2 = 'respuesta_ de web' + result
-      console.log(salida2)
+      let salida2 = 'respuesta_ de web ' + result
+      respuesta= salida2
     })
-    agent.add(`desde web`);
+    agent.add(`${respuesta}`);
   }
 
   let intentMap = new Map();
   intentMap.set('PruebaWeb', PruebaWeb);
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
-  agent.handleRequest(intentMap);
+
+  setTimeout(agent.handleRequest(intentMap),3000);
 });
 
 
