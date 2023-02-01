@@ -44,35 +44,29 @@ app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
 app.post("/webhook", express.json(), (req, res) => {
+  responder_gmail().then(function (result) {
+    const agent = new WebhookClient({ request: req, response: res });
+    console.log('Dialogflow Request headers: ' + JSON.stringify(req.headers));
+    console.log('Dialogflow Request body: ' + JSON.stringify(req.body));
 
-  const agent = new WebhookClient({ request: req, response: res });
-  console.log('Dialogflow Request headers: ' + JSON.stringify(req.headers));
-  console.log('Dialogflow Request body: ' + JSON.stringify(req.body));
+    function welcome(agent) {
+      agent.add(`Welcome to my agent!`);
+    }
+    function fallback(agent) {
+      agent.add(`I didn't understand`);
+      agent.add(`I'm sorry, can you try again?`);
+    }
 
-  function welcome(agent) {
-    agent.add(`Welcome to my agent!`);
-  }
-  function fallback(agent) {
-    agent.add(`I didn't understand`);
-    agent.add(`I'm sorry, can you try again?`);
-  }
-
-  function PruebaWeb(agent) {
-    let respuesta='';
-    responder_gmail().then(function (result) {
-      console.log('salida: ' + result)
-      let salida2 = 'respuesta_ de web ' + result
-      respuesta= salida2
-    })
-    agent.add(`${respuesta}`);
-  }
-
-  let intentMap = new Map();
-  intentMap.set('PruebaWeb', PruebaWeb);
-  intentMap.set('Default Welcome Intent', welcome);
-  intentMap.set('Default Fallback Intent', fallback);
-
-  setTimeout(agent.handleRequest(intentMap),3000);
+    function PruebaWeb(agent) {
+      agent.add(`salida->${result}}`);
+    }
+    let intentMap = new Map();
+    intentMap.set('PruebaWeb', PruebaWeb);
+    intentMap.set('Default Welcome Intent', welcome);
+    intentMap.set('Default Fallback Intent', fallback);
+    agent.handleRequest(intentMap);
+  })
+ 
 });
 
 
