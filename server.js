@@ -55,7 +55,7 @@ app.post("/webhook", express.json(), (req, res) => {
     agent.add(`I'm sorry, can you try again?`);
   }
   function PruebaWeb(agent) {
-    let salida = responder_gmail();
+    let salida = setTimeout(responder_gmail(),2000);
     console.log('salida: '+salida)
     let salida2= 'respuesta_ de web'+salida
     agent.add(salida2);
