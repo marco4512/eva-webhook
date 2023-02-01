@@ -44,8 +44,8 @@ app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
 app.post("/webhook", express.json(), (req, res) => {
-  let mensaje =JSON.stringify(req.body).queryResult.queryText;
-  console.log(mensaje);
+  let mensaje =JSON.stringify(req.body);
+  console.log(Object.keys(mensaje));
   responder_gmail().then(function (result) {
     const agent = new WebhookClient({ request: req, response: res });
     //console.log('Dialogflow Request headers: ' + JSON.stringify(req.headers));
@@ -59,7 +59,7 @@ app.post("/webhook", express.json(), (req, res) => {
     }
 
     function PruebaWeb(agent) {
-      agent.add(`${result}}`);
+      agent.add(`${result}`);
     }
     let intentMap = new Map();
     intentMap.set('PruebaWeb', PruebaWeb);
