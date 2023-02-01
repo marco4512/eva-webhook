@@ -23,7 +23,21 @@ app.use(
   })
 );
 
-
+async function responder_gmail(){
+  const response = await openai.createCompletion({
+  model: "text-davinci-003",
+  prompt: `Q:Como accedo a Gmail
+           A:`,
+  temperature: 0,
+  max_tokens: 100,
+  top_p: 1,
+  frequency_penalty: 0,
+  presence_penalty: 0,
+  stop: ["Q:"],
+  
+});
+return(response.data.choices[0].text)
+}
 
 app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
@@ -40,20 +54,11 @@ app.post("/webhook", express.json(), (req, res) => {
     agent.add(`I didn't understand`);
     agent.add(`I'm sorry, can you try again?`);
   }
-  async function PruebaWeb(agent) {
-    const response = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: `Q:Como accedo a Gmail
-               A:`,
-      temperature: 0,
-      max_tokens: 100,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-      stop: ["Q:"],
-    });
-    //console.log(response.data.choices[0].text)
-    agent.add(response.data.choices[0].text);
+  function PruebaWeb(agent) {
+    let salida = responder_gmail();
+    console.log('salida: '+salida)
+    let salida2= 'respuesta_ de web'+salida
+    agent.add(salida2);
   }
   let intentMap = new Map();
   intentMap.set('PruebaWeb', PruebaWeb);

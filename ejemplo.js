@@ -15,6 +15,7 @@ async function PruebaWebconst(){
   frequency_penalty: 0,
   presence_penalty: 0,
   stop: ["Q:"],
+  
 });
 console.log(response.data.choices[0].text)
 }
