@@ -61,8 +61,9 @@ app.post("/webhook", express.json(), (req, res) => {
     responder_gmail().then(function (result) {
       console.log('salida: ' + result)
       let salida2 = 'respuesta_ de web' + result
-      agent.add(salida2);
+      console.log(salida2)
     })
+    agent.add(`desde web`);
   }
 
   let intentMap = new Map();
