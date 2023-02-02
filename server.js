@@ -45,7 +45,7 @@ app.get("/", (req, res) => {
 });
 app.post("/webhook", express.json(), (req, res) => {
   let mensaje =JSON.stringify(req.body);
-  console.log(Object.keys(mensaje));
+  console.log(mensaje);
   responder_gmail().then(function (result) {
     const agent = new WebhookClient({ request: req, response: res });
     //console.log('Dialogflow Request headers: ' + JSON.stringify(req.headers));
