@@ -49,12 +49,8 @@ app.post("/webhook", express.json(), (req, res) => {
   var intencion = req.body['queryResult']['intent']['displayName']
   if(intencion=='Default_Fallback_Intent'){  
   responder_gmail(pregunta).then(function (result) {
+    console.log('entrando en la promesa')
     const agent = new WebhookClient({ request: req, response: res });
-    //console.log('Dialogflow Request headers: ' + JSON.stringify(req.headers));
-    //console.log('Dialogflow Request body: ' + JSON.stringify(req.body));
-    function welcome(agent) {
-      agent.add(`Welcome to my agent!`);
-    }
     function fallback(agent) {
       agent.add(`${result}`);
     }
