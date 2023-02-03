@@ -23,20 +23,25 @@ app.use(
   })
 );
 
-async function responder_gmail(pregunta) {
-  const response = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: `Q:${pregunta}
-           A:`,
-    temperature: 0,
-    max_tokens: 100,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    stop: ["Q:"],
-
-  });
-  return (response.data.choices[0].text)
+async function retornar_respuesta(pregunta,intencion) {
+  switch (intencion) {
+    case 'Default_Fallback_Intent':
+      const response = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: `Q:${pregunta}
+               A:`,
+        temperature: 0,
+        max_tokens: 100,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+        stop: ["Q:"],
+    
+      });
+      return (response.data.choices[0].text);
+    case 'Datos del correo':
+      return 'Enviando Correo'
+  }
 }
 
 
@@ -46,37 +51,22 @@ app.get("/", (req, res) => {
 app.post("/webhook", express.json(), (req, res) => {
   let mensaje =JSON.stringify(req.body);
   let pregunta = req.body['queryResult']['queryText'];
-  var intencion = req.body['queryResult']['intent']['displayName']
-  if(intencion=='Default_Fallback_Intent'){  
-  responder_gmail(pregunta).then(function (result) {
-    console.log('entrando en la promesa')
+  var intencion = req.body['queryResult']['intent']['displayName'] 
+  retornar_respuesta(pregunta,intencion).then(function (result) {
     const agent = new WebhookClient({ request: req, response: res });
+    
     function fallback(agent) {
       agent.add(`${result}`);
     }
-    function PruebaWeb(agent) {
+    function DatosCorreo(agent) {
       agent.add(`${result}`);
     }
+
     let intentMap = new Map();
-    intentMap.set('PruebaWeb', PruebaWeb);
-    intentMap.set('Default Welcome Intent', welcome);
     intentMap.set('Default_Fallback_Intent', fallback);
+    intentMap.set('Datos del correo', DatosCorreo);
     agent.handleRequest(intentMap);
   })
-}else{
-  const agent2 = new WebhookClient({ request: req, response: res });
-  switch (intencion) {
-    case 'Datos del correo':
-      function Datos(agent2) {
-        agent2.add(`Enviando Correo`);
-      }
-      let intentMap = new Map();
-      intentMap.set('Datos del correo', Datos);
-      agent2.handleRequest(intentMap);
-      break;
-  }
-}
-
 });
 
 
