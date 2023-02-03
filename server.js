@@ -41,7 +41,6 @@ async function retornar_respuesta(pregunta, intencion) {
 
 }
 
-
 app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
@@ -60,7 +59,7 @@ app.post("/webhook", express.json(), (req, res) => {
     intentMap.set('Default_Fallback_Intent', fallback);
     agent.handleRequest(intentMap);
   })}else{
-    console.log(intencion)
+    console.log('-> intencion si no',intencion)
   }
 
 });
