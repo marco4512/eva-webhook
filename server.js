@@ -23,10 +23,10 @@ app.use(
   })
 );
 
-async function responder_gmail() {
+async function responder_gmail(pregunta) {
   const response = await openai.createCompletion({
     model: "text-davinci-003",
-    prompt: `Q:Como accedo a Gmail
+    prompt: `Q:${pregunta}
            A:`,
     temperature: 0,
     max_tokens: 100,
@@ -45,8 +45,9 @@ app.get("/", (req, res) => {
 });
 app.post("/webhook", express.json(), (req, res) => {
   let mensaje =JSON.stringify(req.body);
-  console.log(typeof(req.body),'->',req.body['queryResult']['queryText']);
-  responder_gmail().then(function (result) {
+  let pregunta = req.body['queryResult']['queryText'];
+  //console.log(typeof(req.body),'->',req.body['queryResult']['queryText']);
+  responder_gmail(pregunta).then(function (result) {
     const agent = new WebhookClient({ request: req, response: res });
     //console.log('Dialogflow Request headers: ' + JSON.stringify(req.headers));
     //console.log('Dialogflow Request body: ' + JSON.stringify(req.body));
@@ -57,14 +58,13 @@ app.post("/webhook", express.json(), (req, res) => {
       agent.add(`I didn't understand`);
       agent.add(`I'm sorry, can you try again?`);
     }
-
     function PruebaWeb(agent) {
       agent.add(`${result}`);
     }
     let intentMap = new Map();
     intentMap.set('PruebaWeb', PruebaWeb);
     intentMap.set('Default Welcome Intent', welcome);
-    intentMap.set('Default Fallback Intent', fallback);
+    intentMap.set('Default_Fallback_Intent', fallback);
     agent.handleRequest(intentMap);
   })
 
