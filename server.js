@@ -23,8 +23,8 @@ app.use(
   })
 );
 
-async function retornar_respuesta(pregunta) {
-
+async function retornar_respuesta(pregunta,intencion) {
+  console.log(intencion)
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: `Q:${pregunta}
@@ -49,8 +49,7 @@ app.post("/webhook", express.json(), (req, res) => {
   let mensaje =JSON.stringify(req.body);
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName'] 
-  if(intencion=='Default_Fallback_Intent'){
-  retornar_respuesta(pregunta).then(function (result) {
+  retornar_respuesta(pregunta,intencion).then(function (result) {
     const agent = new WebhookClient({ request: req, response: res });
     console.log('entrando en la promesa')
     function fallback(agent) {
@@ -60,8 +59,6 @@ app.post("/webhook", express.json(), (req, res) => {
     intentMap.set('Default_Fallback_Intent', fallback);
     agent.handleRequest(intentMap);
   })
-}
-
 });
 
 
