@@ -49,6 +49,7 @@ app.post("/webhook", express.json(), (req, res) => {
   let mensaje =JSON.stringify(req.body);
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName'] 
+  if(intencion=='Default_Fallback_Intent'){
   retornar_respuesta(pregunta).then(function (result) {
     const agent = new WebhookClient({ request: req, response: res });
     console.log('entrando en la promesa')
@@ -59,6 +60,8 @@ app.post("/webhook", express.json(), (req, res) => {
     intentMap.set('Default_Fallback_Intent', fallback);
     agent.handleRequest(intentMap);
   })
+}
+
 });
 
 
