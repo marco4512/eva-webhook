@@ -23,26 +23,21 @@ app.use(
   })
 );
 
-async function retornar_respuesta(pregunta,intencion) {
-  switch (intencion) {
-    case 'Default_Fallback_Intent':
-        console.log('recibiendo_Intencion:',intencion)
-        const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: `Q:${pregunta}
+async function retornar_respuesta(pregunta, intencion) {
+  console.log('recibiendo_Intencion:', intencion)
+  const response = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: `Q:${pregunta}
                A:`,
-        temperature: 0,
-        max_tokens: 100,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-        stop: ["Q:"],
-    
-      });
-      return (response.data.choices[0].text);
-    case 'Datos del correo':
-      return 'Enviando Correo'
-  }
+    temperature: 0,
+    max_tokens: 100,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    stop: ["Q:"],
+
+  });
+  return (response.data.choices[0].text);
 }
 
 
@@ -50,11 +45,11 @@ app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
 app.post("/webhook", express.json(), (req, res) => {
-  let mensaje =JSON.stringify(req.body);
+  let mensaje = JSON.stringify(req.body);
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName']
-  console.log('enviando_Intencion:',intencion) 
-  retornar_respuesta(pregunta,intencion).then(function (result) {
+  console.log('enviando_Intencion:', intencion)
+  retornar_respuesta(pregunta, intencion).then(function (result) {
     const agent = new WebhookClient({ request: req, response: res });
     function fallback(agent) {
       agent.add(`${result}`);
