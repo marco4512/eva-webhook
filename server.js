@@ -43,10 +43,12 @@ async function responder_gmail(pregunta) {
 app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
+
 app.post("/webhook", express.json(), (req, res) => {
   let mensaje =JSON.stringify(req.body);
   let pregunta = req.body['queryResult']['queryText'];
-  //console.log(typeof(req.body),'->',req.body['queryResult']['queryText']);
+  console.log(req.body)
+  if(pregunta=='gmail'){
   responder_gmail(pregunta).then(function (result) {
     const agent = new WebhookClient({ request: req, response: res });
     //console.log('Dialogflow Request headers: ' + JSON.stringify(req.headers));
@@ -66,7 +68,14 @@ app.post("/webhook", express.json(), (req, res) => {
     intentMap.set('Default_Fallback_Intent', fallback);
     agent.handleRequest(intentMap);
   })
+}
 
+function Datos(agent) {
+  agent.add(`Enviando Correo`);
+}
+let intentMap = new Map();
+intentMap.set('Datos del correo', Datos);
+agent.handleRequest(intentMap);
 });
 
 
