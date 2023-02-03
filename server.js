@@ -46,6 +46,7 @@ app.get("/", (req, res) => {
 
 app.post("/webhook", express.json(), (req, res) => {
   const agent = new WebhookClient({ request: req, response: res });
+  let intentMap = new Map();
   let pregunta = req.body['queryResult']['queryText'];
   let parametros = req.body['queryResult']['parameters']
   let intencion = req.body['queryResult']['intent']['displayName']
@@ -64,7 +65,6 @@ app.post("/webhook", express.json(), (req, res) => {
       function Datos(agent) {
         agent.add(`Enviando Correo`);
       }
-      let intentMap = new Map();
       intentMap.set('Datos del correo', Datos);
       agent.handleRequest(intentMap);
       break;
