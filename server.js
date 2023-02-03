@@ -47,10 +47,13 @@ app.get("/", (req, res) => {
 app.post("/webhook", express.json(), (req, res) => {
   let mensaje =JSON.stringify(req.body);
   let pregunta = req.body['queryResult']['queryText'];
-  console.log(req.body)
+  const agent = new WebhookClient({ request: req, response: res });
+  let parametros=req.body['queryResult']['parameters']
+  let intencion =req.body['queryResult']['intent']['displayName']
+  console.log('texto de la intencion->',pregunta,' parametros ->',parametros,' intencion->',intencion);
   if(pregunta=='gmail'){
   responder_gmail(pregunta).then(function (result) {
-    const agent = new WebhookClient({ request: req, response: res });
+    
     //console.log('Dialogflow Request headers: ' + JSON.stringify(req.headers));
     //console.log('Dialogflow Request body: ' + JSON.stringify(req.body));
     function welcome(agent) {
