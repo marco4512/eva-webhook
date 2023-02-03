@@ -37,6 +37,7 @@ async function retornar_respuesta(pregunta, intencion) {
     stop: ["Q:"],
 
   });
+  console.log(response.data.choices[0].text)
   return (response.data.choices[0].text);
 }
 
