@@ -55,8 +55,7 @@ app.post("/webhook", express.json(), (req, res) => {
       agent.add(`Welcome to my agent!`);
     }
     function fallback(agent) {
-      agent.add(`I didn't understand`);
-      agent.add(`I'm sorry, can you try again?`);
+      agent.add(`${result}`);
     }
     function PruebaWeb(agent) {
       agent.add(`${result}`);
