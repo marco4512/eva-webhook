@@ -43,33 +43,44 @@ async function responder_gmail(pregunta) {
 app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
-
 app.post("/webhook", express.json(), (req, res) => {
-  const agent = new WebhookClient({ request: req, response: res });
+  let mensaje =JSON.stringify(req.body);
   let pregunta = req.body['queryResult']['queryText'];
-  let parametros = req.body['queryResult']['parameters']
-  let intencion = req.body['queryResult']['intent']['displayName']
-  console.log('texto de la intencion->', pregunta, ' parametros ->', parametros, ' intencion->', intencion);
+  var intencion = req.body['queryResult']['intent']['displayName']
+  if(intencion=='Default_Fallback_Intent'){  
+  responder_gmail(pregunta).then(function (result) {
+    const agent = new WebhookClient({ request: req, response: res });
+    //console.log('Dialogflow Request headers: ' + JSON.stringify(req.headers));
+    //console.log('Dialogflow Request body: ' + JSON.stringify(req.body));
+    function welcome(agent) {
+      agent.add(`Welcome to my agent!`);
+    }
+    function fallback(agent) {
+      agent.add(`${result}`);
+    }
+    function PruebaWeb(agent) {
+      agent.add(`${result}`);
+    }
+    let intentMap = new Map();
+    intentMap.set('PruebaWeb', PruebaWeb);
+    intentMap.set('Default Welcome Intent', welcome);
+    intentMap.set('Default_Fallback_Intent', fallback);
+    agent.handleRequest(intentMap);
+  })
+}else{
+  const agent2 = new WebhookClient({ request: req, response: res });
   switch (intencion) {
-    case 'Default_Fallback_Intent':
-      responder_gmail(pregunta).then(function (result) {
-        function fallback(agent) {
-          agent.add(`${result}`);
-        }
-        let intentMap = new Map();
-        intentMap.set('Default_Fallback_Intent', fallback);
-        agent.handleRequest(intentMap);
-      })
-      break;
     case 'Datos del correo':
-      function Datos(agent) {
-        agent.add(`Enviando Correo`);
+      function Datos(agent2) {
+        agent2.add(`Enviando Correo`);
       }
       let intentMap = new Map();
       intentMap.set('Datos del correo', Datos);
-      agent.handleRequest(intentMap);
+      agent2.handleRequest(intentMap);
       break;
   }
+}
+
 });
 
 
