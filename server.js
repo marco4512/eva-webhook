@@ -26,7 +26,8 @@ app.use(
 async function retornar_respuesta(pregunta,intencion) {
   switch (intencion) {
     case 'Default_Fallback_Intent':
-      const response = await openai.createCompletion({
+        console.log(intencion)
+        const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: `Q:${pregunta}
                A:`,
@@ -54,14 +55,12 @@ app.post("/webhook", express.json(), (req, res) => {
   var intencion = req.body['queryResult']['intent']['displayName'] 
   retornar_respuesta(pregunta,intencion).then(function (result) {
     const agent = new WebhookClient({ request: req, response: res });
-    
     function fallback(agent) {
       agent.add(`${result}`);
     }
     function DatosCorreo(agent) {
       agent.add(`${result}`);
     }
-
     let intentMap = new Map();
     intentMap.set('Default_Fallback_Intent', fallback);
     intentMap.set('Datos del correo', DatosCorreo);
