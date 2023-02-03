@@ -23,7 +23,7 @@ app.use(
   })
 );
 
-async function retornar_respuesta(pregunta,intencion) {
+async function retornar_respuesta(pregunta, intencion) {
   console.log(intencion)
   const response = await openai.createCompletion({
     model: "text-davinci-003",
@@ -46,11 +46,11 @@ app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
 app.post("/webhook", express.json(), (req, res) => {
-  let mensaje =JSON.stringify(req.body);
+  let mensaje = JSON.stringify(req.body);
   let pregunta = req.body['queryResult']['queryText'];
-  var intencion = req.body['queryResult']['intent']['displayName'] 
-  retornar_respuesta(pregunta,intencion).then(function (result) {
-    const agent = new WebhookClient({ request: req, response: res });
+  var intencion = req.body['queryResult']['intent']['displayName']
+  const agent = new WebhookClient({ request: req, response: res });
+  retornar_respuesta(pregunta).then(function (result) {
     console.log('entrando en la promesa')
     function fallback(agent) {
       agent.add(`${result}`);
@@ -59,6 +59,7 @@ app.post("/webhook", express.json(), (req, res) => {
     intentMap.set('Default_Fallback_Intent', fallback);
     agent.handleRequest(intentMap);
   })
+
 });
 
 
