@@ -50,7 +50,7 @@ app.post("/webhook", express.json(), (req, res) => {
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName']
   const agent = new WebhookClient({ request: req, response: res });
-  if(intencion=='Default_Fallback_Intent'){
+  if(intencion==='Default_Fallback_Intent'){
   retornar_respuesta(pregunta).then(function (result) {
     console.log('entrando en la promesa')
     function fallback(agent) {
