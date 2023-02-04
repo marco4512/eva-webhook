@@ -44,9 +44,9 @@ app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
 app.post("/webhook", express.json(), (req, res) => {
-  let mensaje = JSON.stringify(req.body);
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName']
+  console.log(req.body)
   const agent = new WebhookClient({ request: req, response: res });
   var PreguntarAOpenAi = retornar_respuesta(pregunta);
   if(intencion === 'Default_Fallback_Intent'){
@@ -61,7 +61,16 @@ app.post("/webhook", express.json(), (req, res) => {
       console.log('Razon de que truene ->',reason)
     })
   }else{
-    console.log('-> intencion si no',intencion)
+
+    switch(intencion){
+      case 'Datos del correo':
+        function DatosCorreo(agent) {
+          agent.add(`Eviar correo de:  a  : `);
+        }
+        let intentMap = new Map();
+        intentMap.set('Datos del correo', DatosCorreo);
+        agent.handleRequest(intentMap);
+    }
   }
 });
 
