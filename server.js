@@ -23,8 +23,7 @@ app.use(
   })
 );
 
-async function retornar_respuesta(pregunta, intencion) {
-  console.log(intencion)
+async function retornar_respuesta(pregunta) {
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: `Q:${pregunta}
@@ -59,7 +58,7 @@ app.post("/webhook", express.json(), (req, res) => {
       intentMap.set('Default_Fallback_Intent', fallback);
       agent.handleRequest(intentMap);
     }).catch(reason=>{
-      console.log(reason)
+      console.log('Razon de que truene ->',reason)
     })
   }else{
     console.log('-> intencion si no',intencion)
