@@ -49,7 +49,7 @@ app.post("/webhook", express.json(), (req, res) => {
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName']
   const agent = new WebhookClient({ request: req, response: res });
-  var PreguntarAOpenAi = new Promise(retornar_respuesta(pregunta));
+  var PreguntarAOpenAi = retornar_respuesta(pregunta);
   if(intencion === 'Default_Fallback_Intent'){
     Promise.all([PreguntarAOpenAi]).then(result=>{
       function fallback(agent) {
