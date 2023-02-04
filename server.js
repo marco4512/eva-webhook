@@ -46,6 +46,7 @@ app.get("/", (req, res) => {
 app.post("/webhook", express.json(), (req, res) => {
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName']
+  var parametros = req.body['queryResult']['parameters']
   console.log(req.body)
   const agent = new WebhookClient({ request: req, response: res });
   var PreguntarAOpenAi = retornar_respuesta(pregunta);
@@ -65,7 +66,7 @@ app.post("/webhook", express.json(), (req, res) => {
     switch(intencion){
       case 'Datos del correo':
         function DatosCorreo(agent) {
-          agent.add(`Eviar correo de:  a  : `);
+          agent.add(`Eviar correo de: ${parametros['given-name']} a ${parametros['email']}`);
         }
         let intentMap = new Map();
         intentMap.set('Datos del correo', DatosCorreo);
