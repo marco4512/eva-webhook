@@ -49,19 +49,21 @@ app.post("/webhook", express.json(), (req, res) => {
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName']
   const agent = new WebhookClient({ request: req, response: res });
-  if(intencion==='Default_Fallback_Intent'){
-  retornar_respuesta(pregunta).then(function (result) {
-    console.log('entrando en la promesa')
-    function fallback(agent) {
-      agent.add(`${result}`);
-    }
-    let intentMap = new Map();
-    intentMap.set('Default_Fallback_Intent', fallback);
-    agent.handleRequest(intentMap);
-  })}else{
+  var PreguntarAOpenAi = new Promise(retornar_respuesta(pregunta));
+  if(intencion === 'Default_Fallback_Intent'){
+    Promise.all([PreguntarAOpenAi]).then(result=>{
+      function fallback(agent) {
+        agent.add(`${result}`);
+      }
+      let intentMap = new Map();
+      intentMap.set('Default_Fallback_Intent', fallback);
+      agent.handleRequest(intentMap);
+    }).catch(reason=>{
+      console.log(reason)
+    })
+  }else{
     console.log('-> intencion si no',intencion)
   }
-
 });
 
 
