@@ -70,6 +70,7 @@ app.post("/webhook", express.json(), (req, res) => {
         }
         intentMap.set('Datos del correo', DatosCorreo);
         agent.handleRequest(intentMap);
+        break;
       case 'enviarCorreoAsesor':
         var asesores = extraerAsesor(parametros.email)
         Promise.all([asesores]).then(result => {
@@ -88,6 +89,7 @@ app.post("/webhook", express.json(), (req, res) => {
         }).catch(reason => {
           console.log('Razon de que truene ->', reason)
         })
+        break;
 
     }
   }
