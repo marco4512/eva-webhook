@@ -17,8 +17,8 @@ async function extraerAsesor(emailCliente) {
 }
 export {extraerAsesor}
 
-
+/*
 var asesores=extraerAsesor('Marco@gmail.com')
 Promise.all([asesores]).then(resultado=>{
   console.log(resultado.flat())
-})
+})*/
