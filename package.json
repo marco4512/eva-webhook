@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
@@ -11,6 +12,7 @@
   },
   "repository": {
     "type": "git",
+    
     "url": "git+ssh://git@github.com/marco4512/eva-webhook.git"
   },
   "author": "Marco",
@@ -28,6 +30,8 @@
     "dialogflow": "^1.2.0",
     "dialogflow-fulfillment": "^0.6.1",
     "express": "^4.18.2",
+    "firebase": "^9.17.1",
     "openai": "^3.1.0"
   }
+  
 }

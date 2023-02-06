@@ -62,14 +62,19 @@ app.post("/webhook", express.json(), (req, res) => {
       console.log('Razon de que truene ->',reason)
     })
   }else{
-
+    let intentMap = new Map();
     switch(intencion){
       case 'Datos del correo':
         function DatosCorreo(agent) {
-          agent.add(`Eviar correo de: ${parametros['given-name']} a ${parametros['email']}`);
+          agent.add(`Eviar correo de: ${parametros['given-name']} con correo  ${parametros['email']}`);
         }
-        let intentMap = new Map();
         intentMap.set('Datos del correo', DatosCorreo);
+        agent.handleRequest(intentMap);
+      case 'enviarCorreoAsesor':
+        function enviarCorreoAsesor(agent){
+          agent.add(`Tu Asesor es ${parametros.email}`)
+        }
+        intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
         agent.handleRequest(intentMap);
     }
   }
