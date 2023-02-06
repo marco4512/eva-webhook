@@ -1,8 +1,9 @@
-import express  from "express";
-import bodyParser  from "body-parser";
+import express from "express";
+import bodyParser from "body-parser";
 import { Configuration, OpenAIApi } from "openai";
+import { extraerAsesor } from "./firebaseFunction.js";
 const app = express();
-import  {WebhookClient}  from 'dialogflow-fulfillment';
+import { WebhookClient } from 'dialogflow-fulfillment';
 const configuration = new Configuration({
   apiKey: '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',
 });
@@ -71,11 +72,17 @@ app.post("/webhook", express.json(), (req, res) => {
         intentMap.set('Datos del correo', DatosCorreo);
         agent.handleRequest(intentMap);
       case 'enviarCorreoAsesor':
-        function enviarCorreoAsesor(agent) {
-          agent.add(`Tu Asesor es ${parametros.email}`)
-        }
-        intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
-        agent.handleRequest(intentMap);
+        var asesores = extraerAsesor(parametros.email)
+        Promise.all([asesores]).then(result => {
+          function enviarCorreoAsesor(agent) {
+            result.flat().map((asesor)=>agent.add(`Tu Asesor es ${asesor}`))
+          }
+          intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
+          agent.handleRequest(intentMap);
+        }).catch(reason => {
+          console.log('Razon de que truene ->', reason)
+        })
+
     }
   }
 });

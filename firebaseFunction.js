@@ -15,9 +15,11 @@ async function extraerAsesor(emailCliente) {
   });
   return asesores;
 }
+export {extraerAsesor}
 
+/*
 var asesores=extraerAsesor('Marco@gmail.com')
 Promise.all([asesores]).then(resultado=>{
   console.log(resultado.flat())
 })
-
+*/
