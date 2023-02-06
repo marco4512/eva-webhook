@@ -74,8 +74,8 @@ app.post("/webhook", express.json(), (req, res) => {
         var asesores = extraerAsesor(parametros.email)
         Promise.all([asesores]).then(result => {
           function enviarCorreoAsesor(agent) {
-            console.log(result.length)
-            if (result.length != 0) {
+            console.log(result.flat().length)
+            if (result.flat().length != 0) {
 
               agent.add(`Aqui estan tus asesores`)
               result.flat().map((asesor) => agent.add(`${asesor}`))
