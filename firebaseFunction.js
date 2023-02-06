@@ -8,7 +8,7 @@ async function extraerAsesor(emailCliente) {
     // doc.data() is never undefined for query doc snapshots
     let valores =Array.from(doc.data().email)
     valores.map(function(correo){
-      if(correo==emailCliente){
+      if(correo==emailCliente.toLowerCase()){
         asesores.push(doc.id)
       }
     })
@@ -17,9 +17,8 @@ async function extraerAsesor(emailCliente) {
 }
 export {extraerAsesor}
 
-/*
+
 var asesores=extraerAsesor('Marco@gmail.com')
 Promise.all([asesores]).then(resultado=>{
   console.log(resultado.flat())
 })
-*/

@@ -75,7 +75,13 @@ app.post("/webhook", express.json(), (req, res) => {
         var asesores = extraerAsesor(parametros.email)
         Promise.all([asesores]).then(result => {
           function enviarCorreoAsesor(agent) {
-            result.flat().map((asesor)=>agent.add(`Tu Asesor es ${asesor}`))
+            if (result.length != 0) {
+              agent.add(`Aqui estan tus asesores`)
+              result.flat().map((asesor) => agent.add(`${asesor}`))
+            } else {
+              agent.add(`:c No encuentro a tu asesor`)
+              
+            }
           }
           intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
           agent.handleRequest(intentMap);
