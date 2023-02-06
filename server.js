@@ -48,7 +48,6 @@ app.post("/webhook", express.json(), (req, res) => {
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName']
   var parametros = req.body['queryResult']['parameters']
-  console.log(req.body)
   const agent = new WebhookClient({ request: req, response: res });
   var PreguntarAOpenAi = retornar_respuesta(pregunta);
   if (intencion === 'Default_Fallback_Intent') {
@@ -75,12 +74,13 @@ app.post("/webhook", express.json(), (req, res) => {
         var asesores = extraerAsesor(parametros.email)
         Promise.all([asesores]).then(result => {
           function enviarCorreoAsesor(agent) {
+            console.log(result.length)
             if (result.length != 0) {
+
               agent.add(`Aqui estan tus asesores`)
               result.flat().map((asesor) => agent.add(`${asesor}`))
             } else {
               agent.add(`:c No encuentro a tu asesor`)
-              
             }
           }
           intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
