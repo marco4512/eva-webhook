@@ -2,7 +2,7 @@ import express  from "express";
 import bodyParser  from "body-parser";
 import { Configuration, OpenAIApi } from "openai";
 const app = express();
-import  WebhookClient  from 'dialogflow-fulfillment';
+import  {WebhookClient}  from 'dialogflow-fulfillment';
 const configuration = new Configuration({
   apiKey: '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',
 });
