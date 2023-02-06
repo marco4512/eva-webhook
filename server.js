@@ -1,8 +1,8 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const { Configuration, OpenAIApi } = require("openai");
+import express  from "express";
+import bodyParser  from "body-parser";
+import { Configuration, OpenAIApi } from "openai";
 const app = express();
-const { WebhookClient } = require('dialogflow-fulfillment');
+import  WebhookClient  from 'dialogflow-fulfillment';
 const configuration = new Configuration({
   apiKey: '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',
 });
@@ -50,20 +50,20 @@ app.post("/webhook", express.json(), (req, res) => {
   console.log(req.body)
   const agent = new WebhookClient({ request: req, response: res });
   var PreguntarAOpenAi = retornar_respuesta(pregunta);
-  if(intencion === 'Default_Fallback_Intent'){
-    Promise.all([PreguntarAOpenAi]).then(result=>{
+  if (intencion === 'Default_Fallback_Intent') {
+    Promise.all([PreguntarAOpenAi]).then(result => {
       function fallback(agent) {
         agent.add(`${result}`);
       }
       let intentMap = new Map();
       intentMap.set('Default_Fallback_Intent', fallback);
       agent.handleRequest(intentMap);
-    }).catch(reason=>{
-      console.log('Razon de que truene ->',reason)
+    }).catch(reason => {
+      console.log('Razon de que truene ->', reason)
     })
-  }else{
+  } else {
     let intentMap = new Map();
-    switch(intencion){
+    switch (intencion) {
       case 'Datos del correo':
         function DatosCorreo(agent) {
           agent.add(`Eviar correo de: ${parametros['given-name']} con correo  ${parametros['email']}`);
@@ -71,7 +71,7 @@ app.post("/webhook", express.json(), (req, res) => {
         intentMap.set('Datos del correo', DatosCorreo);
         agent.handleRequest(intentMap);
       case 'enviarCorreoAsesor':
-        function enviarCorreoAsesor(agent){
+        function enviarCorreoAsesor(agent) {
           agent.add(`Tu Asesor es ${parametros.email}`)
         }
         intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);

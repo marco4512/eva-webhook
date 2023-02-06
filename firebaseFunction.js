@@ -1,7 +1,6 @@
 import { doc, getDoc, query, where, getDocs, getFirestore, collection } from "firebase/firestore";
 import { db } from "./firebase.js";
 
-
 async function extraerAsesor(emailCliente) {
   var asesores=[]
   const querySnapshot = await getDocs(collection(db, "Asesores"));
