@@ -45,6 +45,8 @@ app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
 app.post("/webhook", express.json(), (req, res) => {
+  console.log('->request',req)
+  console.log('->response',res)
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName']
   var parametros = req.body['queryResult']['parameters']
@@ -77,7 +79,6 @@ app.post("/webhook", express.json(), (req, res) => {
           function enviarCorreoAsesor(agent) {
             console.log(result.flat().length)
             if (result.flat().length != 0) {
-
               agent.add(`Aqui estan tus asesores`)
               result.flat().map((asesor) => agent.add(`${asesor}`))
             } else {
@@ -90,12 +91,9 @@ app.post("/webhook", express.json(), (req, res) => {
           console.log('Razon de que truene ->', reason)
         })
         break;
-
     }
   }
 });
-
-
 app.listen(port, () => {
   console.log(`Escuchando peticiones en el puerto ${port}`);
 });
