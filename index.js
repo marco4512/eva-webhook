@@ -5,6 +5,11 @@ import { extraerAsesor } from "./firebaseFunction.js";
 const app = express();
 import { WebhookClient } from 'dialogflow-fulfillment';
 import { async } from "@firebase/util";
+import { Configuration, OpenAIApi } from "openai";
+const configuration = new Configuration({
+    apiKey: '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',
+});
+const openai = new OpenAIApi(configuration);
 //Para iniciar en el entorno local
 const port = process.env.PORT || 3000;
 // for parsing json
