@@ -39,7 +39,11 @@ app.post("/webhook", express.json(), (req, res) => {
 
     let intentMap = new Map();
     intentMap.set('Default_Fallback_Intent', fallback);
-    agent.handleRequest(intentMap)
+    console.log(intentMap)
+    intentMap.then(
+        agent.handleRequest(intentMap)
+    )
+
 });
 /**Mostrar la consola de manera local */
 app.listen(port, () => {
