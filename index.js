@@ -29,28 +29,17 @@ app.post("/webhook", express.json(), (req, res) => {
     var pregunta = req.body['queryResult']['queryText'];
     var intencion = req.body['queryResult']['intent']['displayName']
     var parametros = req.body['queryResult']['parameters']
-    
-    console.log('Entrando a intencion',intencion)
-    switch (intencion) {
-        case 'Default_Fallback_Intent':
-            var respuestaOpenAi = openai_response(pregunta);
-            var aux='';
-            Promise.race([respuestaOpenAi]).then(result => {
-                aux=aux+'->'+result
-                console.log('respuesta --- >',result);
-                function fallback(agent) {
-                    agent.add(`${result}`);
-                }
-                let intentMap = new Map();
-                intentMap.set('Default_Fallback_Intent', fallback);
-                agent.handleRequest(intentMap)
-            }).catch(reason => {
-                console.log('Razon de que truene ->', reason)
-            })
-            console.log('respuesta del api ->',aux)
-            break;
+    console.log('Entrando a intencion', intencion)
+    function fallback(agent) {
+        var respuestaOpenAi = openai_response(pregunta);
+        respuestaOpenAi.then(result => {
+            agent.add(`Salida ->${result}`);
+        })
     }
-
+    
+    let intentMap = new Map();
+    intentMap.set('Default_Fallback_Intent', fallback);
+    agent.handleRequest(intentMap)
 });
 /**Mostrar la consola de manera local */
 app.listen(port, () => {
