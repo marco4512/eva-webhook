@@ -32,6 +32,7 @@ app.post("/webhook", express.json(), (req, res) => {
     console.log('Entrando a intencion', intencion)
     switch (intencion) {
         case 'Default_Fallback_Intent':
+            console.log('en fall back')
             var respuestaOpenAi = openai_response(pregunta);
             respuestaOpenAi.then(result => {
                 function fallback(agent) {
