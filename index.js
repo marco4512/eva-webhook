@@ -55,7 +55,17 @@ app.post("/webhook", express.json(), (req, res) => {
         }
     }
     async function enviarCorreoAsesor(agent) {
-        var asesores = extraerAsesor(parametros.email)
+        asesores=[];
+        const querySnapshot = await getDocs(collection(db, "Asesores"));
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            let valores = Array.from(doc.data().email)
+            valores.map(function (correo) {
+                if (correo == emailCliente.toLowerCase()) {
+                    asesores.push(doc.id)
+                }
+            })
+        });
         if (asesores.flat().length != 0) {
             agent.add(`Aqui estan tus asesores`)
             asesores.flat().map((asesor) => agent.add(`${asesor}`))
