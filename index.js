@@ -33,7 +33,7 @@ app.post("/webhook", express.json(), (req, res) => {
     Promise.all([respuestaOpenAi]).then(respuesta => {
         console.log('respuesta->', respuesta)
         function fallback(agent) {
-            agent.add(`${result}`);
+            agent.add(`${respuesta}`);
         }
         let intentMap = new Map();
         intentMap.set('Default_Fallback_Intent', fallback);
