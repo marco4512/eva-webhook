@@ -37,6 +37,7 @@ app.post("/webhook", express.json(), (req, res) => {
     var respuestaOpenAi = openai_response(pregunta, intencion);
     var parametros = req.body['queryResult']['parameters']
     async function fallback(agent) {
+        if(pregunta!='como ingresar a gmail'){
         const response = await openai.createCompletion({
             model: "text-davinci-003",
             prompt: `Q:${pregunta}
@@ -49,6 +50,9 @@ app.post("/webhook", express.json(), (req, res) => {
             stop: ["Q:"],
         });
         agent.add(`${response.data.choices[0].text}`);
+    }else{
+        agent.add('esta pregunta ya esta')
+    }
     }
     let intentMap = new Map();
     intentMap.set('Default_Fallback_Intent', fallback);
