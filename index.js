@@ -36,7 +36,7 @@ app.post("/webhook", express.json(), (req, res) => {
             var respuestaOpenAi = openai_response(pregunta);
             var aux='';
             Promise.race([respuestaOpenAi]).then(result => {
-                aux=aux+'->'
+                aux=aux+'->'+result
                 function fallback(agent) {
                     agent.add(`${result}`);
                 }
