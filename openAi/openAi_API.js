@@ -19,7 +19,7 @@ async function openai_response(pregunta,intencion) {
   
     });
     return (response.data.choices[0].text)}else{
-        return('');
+        return('no es la intencion la intencion es ->',intencion);
     }
   }
 export {openai_response}
