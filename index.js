@@ -35,18 +35,18 @@ app.post("/webhook", express.json(), (req, res) => {
         case 'Default_Fallback_Intent':
             var respuestaOpenAi = openai_response(pregunta);
             var aux='';
-            var intentMap = new Map();
             Promise.race([respuestaOpenAi]).then(result => {
                 aux=aux+'->'
                 function fallback(agent) {
                     agent.add(`${result}`);
                 }
+                let intentMap = new Map();
                 intentMap.set('Default_Fallback_Intent', fallback);
                 agent.handleRequest(intentMap)
             }).catch(reason => {
                 console.log('Razon de que truene ->', reason)
             })
-            console.log(aux)
+            console.log('respuesta del api ->',aux)
             break;
     }
 
