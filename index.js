@@ -25,27 +25,34 @@ app.get("/", (req, res) => {
 });
 /**Desde Aqui recibimos las peticiones de dialogFlow */
 app.post("/webhook", express.json(), (req, res) => {
-    
+
     const agent = new WebhookClient({ request: req, response: res });
     var pregunta = req.body['queryResult']['queryText'];
     var intencion = req.body['queryResult']['intent']['displayName']
     var parametros = req.body['queryResult']['parameters']
     console.log('Entrando a intencion', intencion)
-    async function fallback(agent) {
-        var respuestaOpenAi = openai_response(pregunta);
-        respuestaOpenAi.then(result => {
-            console.log(result)
-            agent.add(`Salida ->${result}`);
-        })
-    }
-
-    let intentMap = new Map();
-    intentMap.set('Default_Fallback_Intent', fallback);
-    console.log(intentMap['Default_Fallback_Intent'])
-    intentMap['Default_Fallback_Intent'].then(
-        agent.handleRequest(intentMap)
-    )
+    seleccionarIntenciones(agent,intencion)
+  
 });
+/**Seleccionar opcion */
+function seleccionarIntenciones(agent,intencion) {    
+    return new Promise(function() {
+        switch (intencion) {
+            case 'Default_Fallback_Intent':
+                var respuestaOpenAi = openai_response(pregunta);
+                respuestaOpenAi.then(result => {
+                    function fallback(agent) {
+                        agent.add(`${result}`);
+                    }
+                    let intentMap = new Map();
+                    intentMap.set('Default_Fallback_Intent', fallback);
+                    agent.handleRequest(intentMap)
+                })
+                break;
+        }
+        setTimeout(openai_response, 3000);
+    });
+}
 /**Mostrar la consola de manera local */
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
