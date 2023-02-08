@@ -4,7 +4,8 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-async function openai_response(pregunta) {
+async function openai_response(pregunta,intencion) {
+    if(intencion=='Default_Fallback_Intent'){
     const response = await openai.createCompletion({
       model: "text-davinci-003",
       prompt: `Q:${pregunta}
@@ -17,6 +18,8 @@ async function openai_response(pregunta) {
       stop: ["Q:"],
   
     });
-    return (response.data.choices[0].text)  
+    return (response.data.choices[0].text)}else{
+        return('');
+    }
   }
 export {openai_response}

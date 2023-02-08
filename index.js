@@ -25,15 +25,15 @@ app.get("/", (req, res) => {
 });
 /**Desde Aqui recibimos las peticiones de dialogFlow */
 app.post("/webhook", express.json(), (req, res) => {
-    const agent = new WebhookClient({ request: req, response: res });
     var pregunta = req.body['queryResult']['queryText'];
     var intencion = req.body['queryResult']['intent']['displayName']
+    const agent = new WebhookClient({ request: req, response: res });
+    var respuestaOpenAi = openai_response(pregunta,intencion);
     var parametros = req.body['queryResult']['parameters']
     console.log('Entrando a intencion', intencion)
     switch (intencion) {
         case 'Default_Fallback_Intent':
             console.log('en fall back')
-            var respuestaOpenAi = openai_response(pregunta);
             respuestaOpenAi.then(result => {
                 function fallback(agent) {
                     agent.add(`${result}`);
