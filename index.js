@@ -37,22 +37,31 @@ app.post("/webhook", express.json(), (req, res) => {
     var respuestaOpenAi = openai_response(pregunta, intencion);
     var parametros = req.body['queryResult']['parameters']
     async function fallback(agent) {
-        if(pregunta!='como ingresar a gmail'){
-        const response = await openai.createCompletion({
-            model: "text-davinci-003",
-            prompt: `Q:${pregunta}
+        if (pregunta != 'como ingresar a gmail') {
+            const response = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt: `Q:${pregunta}
                    A:`,
-            temperature: 0,
-            max_tokens: 100,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0,
-            stop: ["Q:"],
-        });
-        agent.add(`${response.data.choices[0].text}`);
-    }else{
-        agent.add('esta pregunta ya esta')
+                temperature: 0,
+                max_tokens: 100,
+                top_p: 1,
+                frequency_penalty: 0,
+                presence_penalty: 0,
+                stop: ["Q:"],
+            });
+            agent.add(`${response.data.choices[0].text}`);
+        } else {
+            agent.add('esta pregunta ya esta')
+        }
     }
+    async function enviarCorreoAsesor(agent) {
+        var asesores = extraerAsesor(parametros.email)
+        if (asesores.flat().length != 0) {
+            agent.add(`Aqui estan tus asesores`)
+            asesores.flat().map((asesor) => agent.add(`${asesor}`))
+        } else {
+            agent.add(`:c No encuentro a tu asesor`)
+        }
     }
     let intentMap = new Map();
     intentMap.set('Default_Fallback_Intent', fallback);
