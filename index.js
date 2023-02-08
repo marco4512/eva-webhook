@@ -25,14 +25,24 @@ app.get("/", (req, res) => {
 });
 /**Desde Aqui recibimos las peticiones de dialogFlow */
 app.post("/webhook", express.json(), (req, res) => {
-
     const agent = new WebhookClient({ request: req, response: res });
     var pregunta = req.body['queryResult']['queryText'];
     var intencion = req.body['queryResult']['intent']['displayName']
     var parametros = req.body['queryResult']['parameters']
     console.log('Entrando a intencion', intencion)
-    seleccionarIntenciones(agent,intencion,pregunta)
-  
+    switch (intencion) {
+        case 'Default_Fallback_Intent':
+            var respuestaOpenAi = openai_response(pregunta);
+            respuestaOpenAi.then(result => {
+                function fallback(agent) {
+                    agent.add(`${result}`);
+                }
+                let intentMap = new Map();
+                intentMap.set('Default_Fallback_Intent', fallback);
+                agent.handleRequest(intentMap)
+            })
+            break;
+    }
 });
 /**Seleccionar opcion */
 function seleccionarIntenciones(agent,intencion,pregunta) {    
