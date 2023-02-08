@@ -42,9 +42,10 @@ app.post("/webhook", express.json(), (req, res) => {
                     agent.add(`${result}`);
                 }
                 intentMap.set('Default_Fallback_Intent', fallback);
+                agent.handleRequest(intentMap)
             }).catch(reason => {
                 console.log('Razon de que truene ->', reason)
-            }).finally(agent.handleRequest(intentMap))
+            })
             console.log(aux)
             break;
     }
