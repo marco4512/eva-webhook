@@ -30,13 +30,13 @@ app.post("/webhook", express.json(), (req, res) => {
     var intencion = req.body['queryResult']['intent']['displayName']
     var parametros = req.body['queryResult']['parameters']
     console.log('Entrando a intencion', intencion)
-    function fallback(agent) {
+    async function fallback(agent) {
         var respuestaOpenAi = openai_response(pregunta);
         respuestaOpenAi.then(result => {
             agent.add(`Salida ->${result}`);
         })
     }
-    
+
     let intentMap = new Map();
     intentMap.set('Default_Fallback_Intent', fallback);
     agent.handleRequest(intentMap)
