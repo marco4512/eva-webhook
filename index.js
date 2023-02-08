@@ -31,11 +31,11 @@ app.post("/webhook", express.json(), (req, res) => {
     var intencion = req.body['queryResult']['intent']['displayName']
     var parametros = req.body['queryResult']['parameters']
     console.log('Entrando a intencion', intencion)
-    seleccionarIntenciones(agent,intencion)
+    seleccionarIntenciones(agent,intencion,pregunta)
   
 });
 /**Seleccionar opcion */
-function seleccionarIntenciones(agent,intencion) {    
+function seleccionarIntenciones(agent,intencion,pregunta) {    
     return new Promise(function() {
         switch (intencion) {
             case 'Default_Fallback_Intent':
