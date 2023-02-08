@@ -4,6 +4,7 @@ import { openai_response } from "./openAi/openAi_API.js"
 import { extraerAsesor } from "./firebaseFunction.js";
 const app = express();
 import { WebhookClient } from 'dialogflow-fulfillment';
+import { async } from "@firebase/util";
 //Para iniciar en el entorno local
 const port = process.env.PORT || 3000;
 // for parsing json
@@ -30,35 +31,25 @@ app.post("/webhook", express.json(), (req, res) => {
     var intencion = req.body['queryResult']['intent']['displayName']
     var respuestaOpenAi = openai_response(pregunta, intencion);
     var parametros = req.body['queryResult']['parameters']
-    respuestaOpenAi.then(respuesta => {
-        console.log('respuesta->', respuesta)
-        function fallback(agent) {
-            agent.add(`${respuesta}`);
-        }
-        let intentMap = new Map();
-        intentMap.set('Default_Fallback_Intent', fallback);
-        agent.handleRequest(intentMap)
-         })
+    async function fallback(agent) {
+        const response = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: `Q:${pregunta}
+                   A:`,
+            temperature: 0,
+            max_tokens: 100,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+            stop: ["Q:"],
+        });
+        agent.add(`${response.data.choices[0].text}`);
+    }
+    let intentMap = new Map();
+    intentMap.set('Default_Fallback_Intent', fallback);
+    agent.handleRequest(intentMap)
 });
-/**Seleccionar opcion */
-function seleccionarIntenciones(agent, intencion, pregunta) {
-    return new Promise(function () {
-        switch (intencion) {
-            case 'Default_Fallback_Intent':
-                var respuestaOpenAi = openai_response(pregunta);
-                respuestaOpenAi.then(result => {
-                    function fallback(agent) {
-                        agent.add(`${result}`);
-                    }
-                    let intentMap = new Map();
-                    intentMap.set('Default_Fallback_Intent', fallback);
-                    agent.handleRequest(intentMap)
-                })
-                break;
-        }
-        setTimeout(openai_response, 3000);
-    });
-}
+
 /**Mostrar la consola de manera local */
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
