@@ -45,8 +45,8 @@ app.get("/", (req, res) => {
   return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
 app.post("/webhook", express.json(), (req, res) => {
-  console.log('->request',req)
-  console.log('->response',res)
+  //console.log('->request',req)
+  //console.log('->response',res)
   let pregunta = req.body['queryResult']['queryText'];
   var intencion = req.body['queryResult']['intent']['displayName']
   var parametros = req.body['queryResult']['parameters']
