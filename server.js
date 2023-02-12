@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { Configuration, OpenAIApi } from "openai";
-import { extraerAsesor } from "./firebaseFunction.js";
+import { extraerAsesor } from "./fireBaseFunctios/firebaseFunction.js";
 const app = express();
 import { WebhookClient } from 'dialogflow-fulfillment';
 const configuration = new Configuration({

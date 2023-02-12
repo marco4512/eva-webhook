@@ -1,12 +1,12 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { extraerAsesor } from "./firebaseFunction.js";
+import { extraerAsesor } from "./fireBaseFunctios/firebaseFunction.js";
 import { openai_response } from "./openAi/openAi_API.js"
-import { doc, getDoc, query, where, getDocs, getFirestore, collection } from "firebase/firestore";
-import { db } from "./firebase.js";
 const app = express();
 import { WebhookClient } from 'dialogflow-fulfillment';
 import { async } from "@firebase/util";
+import { doc, getDoc,setDoc, query, where, updateDoc,getDocs, getFirestore, collection } from "firebase/firestore";
+import { db } from "./fireBaseFunctios/firebase.js";
 import { Configuration, OpenAIApi } from "openai";
 const configuration = new Configuration({
     apiKey: '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',
@@ -38,25 +38,38 @@ app.post("/webhook", express.json(), (req, res) => {
     var intencion = req.body['queryResult']['intent']['displayName']
     //var respuestaOpenAi = openai_response(pregunta, intencion);
     var parametros = req.body['queryResult']['parameters']
+    
+    
     async function fallback(agent) {
-        if (pregunta != 'como ingresar a gmail') {
-            const response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt: `Q:${pregunta}
-                   A:`,
-                temperature: 0,
-                max_tokens: 100,
-                top_p: 1,
-                frequency_penalty: 0,
-                presence_penalty: 0,
-                stop: ["Q:"],
-            });
-            agent.add(`${response.data.choices[0].text}`);
-        } else {
-            agent.add('esta pregunta ya esta')
+        const docRef = doc(db, "Questions", "SomeQuestions");
+        const questionRef = collection(db, "Questions");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            if(docSnap.data()[pregunta]!=undefined){
+                agent.add(docSnap.data()[pregunta]);
+                console.log(docSnap.data()[pregunta])
+            }else{
+                const response = await openai.createCompletion({
+                    model: "text-davinci-003",
+                    prompt: `Q:${pregunta}
+                       A:`,
+                    temperature: 0,
+                    max_tokens: 100,
+                    top_p: 1,
+                    frequency_penalty: 0,
+                    presence_penalty: 0,
+                    stop: ["Q:"],
+                });
+                agent.add(`${response.data.choices[0].text}`);
+                console.log('Ingresando nueva Pregunta')
+                var newQuestion={};
+                newQuestion[pregunta]=response.data.choices[0].text
+                await updateDoc(doc(questionRef, "SomeQuestions"),newQuestion);
+            }
         }
     }
     if (intencion == 'Default_Fallback_Intent') {
+
         let intentMap = new Map();
         intentMap.set('Default_Fallback_Intent', fallback);
         agent.handleRequest(intentMap)
