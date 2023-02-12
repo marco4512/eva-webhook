@@ -56,7 +56,7 @@ app.post("/webhook", express.json(), (req, res) => {
         }
     }
     async function enviarCorreoAsesor(agent) {
-        asesores=[];
+        var asesores=[];
         const querySnapshot = await getDocs(collection(db, "Asesores"));
         querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
