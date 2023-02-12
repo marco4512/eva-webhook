@@ -1,7 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { openai_response } from "./openAi/openAi_API.js"
-import { extraerAsesor } from "./firebaseFunction.js";
+import { doc, getDoc, query, where, getDocs, getFirestore, collection } from "firebase/firestore";
+import { db } from "./firebase.js";
 const app = express();
 import { WebhookClient } from 'dialogflow-fulfillment';
 import { async } from "@firebase/util";
@@ -61,7 +62,7 @@ app.post("/webhook", express.json(), (req, res) => {
             // doc.data() is never undefined for query doc snapshots
             let valores = Array.from(doc.data().email)
             valores.map(function (correo) {
-                if (correo == emailCliente.toLowerCase()) {
+                if (correo == parametros.email.toLowerCase()) {
                     asesores.push(doc.id)
                 }
             })
@@ -74,7 +75,12 @@ app.post("/webhook", express.json(), (req, res) => {
         }
     }
     let intentMap = new Map();
+    if(intencion=='Default_Fallback_Intent'){
     intentMap.set('Default_Fallback_Intent', fallback);
+    }else{
+    intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
+    }
+
     agent.handleRequest(intentMap)
 });
 
