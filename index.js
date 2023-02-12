@@ -56,24 +56,12 @@ app.post("/webhook", express.json(), (req, res) => {
             agent.add('esta pregunta ya esta')
         }
     }
-    async function enviarCorreoAsesor(agent) {
-        var asesores = [];
-        const querySnapshot = await getDocs(collection(db, "Asesores"));
-        querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            let valores = Array.from(doc.data().email)
-            valores.map(function (correo) {
-                if (correo == parametros.email.toLowerCase()) {
-                    agent.add(`${doc.id}`)
-                    asesores.push(doc.id)
-                }
-            })
-        });
-    }
     if (intencion == 'Default_Fallback_Intent') {
         let intentMap = new Map();
         intentMap.set('Default_Fallback_Intent', fallback);
-        agent.handleRequest(intentMap)
+        setTimeout(function(){
+            agent.handleRequest(intentMap);
+        },2000)
     } else {
         var asesores = extraerAsesor(parametros.email)
         Promise.all([asesores]).then(result => {
