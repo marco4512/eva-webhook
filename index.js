@@ -75,7 +75,6 @@ app.post("/webhook", express.json(), (req, res) => {
     }
     let intentMap = new Map();
     intentMap.set('Default_Fallback_Intent', fallback);
-    intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
     agent.handleRequest(intentMap)
 });
 
