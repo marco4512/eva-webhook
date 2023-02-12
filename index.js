@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import { extraerAsesor } from "./firebaseFunction.js";
 import { openai_response } from "./openAi/openAi_API.js"
 import { doc, getDoc, query, where, getDocs, getFirestore, collection } from "firebase/firestore";
 import { db } from "./firebase.js";
@@ -69,14 +70,31 @@ app.post("/webhook", express.json(), (req, res) => {
             })
         });
     }
-    let intentMap = new Map();
     if (intencion == 'Default_Fallback_Intent') {
+        let intentMap = new Map();
         intentMap.set('Default_Fallback_Intent', fallback);
+        agent.handleRequest(intentMap)
     } else {
-        intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
+        var asesores = extraerAsesor(parametros.email)
+        Promise.all([asesores]).then(result => {
+            function enviarCorreoAsesor(agent) {
+                console.log(result.flat().length)
+                if (result.flat().length != 0) {
+                    agent.add(`Aqui estan tus asesores`)
+                    result.flat().map((asesor) => agent.add(`${asesor}`))
+                } else {
+                    agent.add(`:c No encuentro a tu asesor`)
+                }
+            }
+            let intentMap = new Map();
+            intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
+            agent.handleRequest(intentMap);
+        }).catch(reason => {
+            console.log('Razon de que truene ->', reason)
+        })
     }
 
-    agent.handleRequest(intentMap)
+    
 });
 
 /**Mostrar la consola de manera local */
