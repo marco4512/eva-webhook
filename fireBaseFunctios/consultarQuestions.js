@@ -34,8 +34,14 @@ async function extraerQuestions(pregunta) {
     }
 
 }
+
+function Formato(pregunta){
+    let newFormat=String(pregunta).toLocaleLowerCase().replace('?','').replace('¿','')   
+    console.log(newFormat)
+}
+Formato('¿Quien pinto la mona Lisa?')
 //export {extraerAsesor}
-var preguntas = extraerQuestions('como hago una pizza ?');
+//var preguntas = extraerQuestions('como hago una pizza ?');
 //Promise.all([preguntas]).then(resultado => {
 //    console.log(resultado)
 //})

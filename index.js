@@ -38,20 +38,19 @@ app.post("/webhook", express.json(), (req, res) => {
     var intencion = req.body['queryResult']['intent']['displayName']
     //var respuestaOpenAi = openai_response(pregunta, intencion);
     var parametros = req.body['queryResult']['parameters']
-    
-    
     async function fallback(agent) {
         const docRef = doc(db, "Questions", "SomeQuestions");
         const questionRef = collection(db, "Questions");
         const docSnap = await getDoc(docRef);
+        let newPregunta=String(pregunta).toLocaleLowerCase().replace('?','').replace('¿','') 
         if (docSnap.exists()) {
-            if(docSnap.data()[pregunta]!=undefined){
-                agent.add(docSnap.data()[pregunta]);
-                console.log(docSnap.data()[pregunta])
+            if(docSnap.data()[newPregunta]!=undefined){
+                agent.add(docSnap.data()[newPregunta]);
+                console.log(docSnap.data()[newPregunta])
             }else{
                 const response = await openai.createCompletion({
                     model: "text-davinci-003",
-                    prompt: `Q:${pregunta}
+                    prompt: `Q:${newPregunta}
                        A:`,
                     temperature: 0,
                     max_tokens: 100,
@@ -63,13 +62,12 @@ app.post("/webhook", express.json(), (req, res) => {
                 agent.add(`${response.data.choices[0].text}`);
                 console.log('Ingresando nueva Pregunta')
                 var newQuestion={};
-                newQuestion[pregunta]=response.data.choices[0].text
+                newQuestion[newPregunta]=response.data.choices[0].text
                 await updateDoc(doc(questionRef, "SomeQuestions"),newQuestion);
             }
         }
     }
     if (intencion == 'Default_Fallback_Intent') {
-
         let intentMap = new Map();
         intentMap.set('Default_Fallback_Intent', fallback);
         agent.handleRequest(intentMap)
