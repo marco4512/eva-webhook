@@ -36,7 +36,7 @@ app.post("/webhook", express.json(), (req, res) => {
     const agent = new WebhookClient({ request: req, response: res });
     var pregunta = req.body['queryResult']['queryText'];
     var intencion = req.body['queryResult']['intent']['displayName']
-    var respuestaOpenAi = openai_response(pregunta, intencion);
+    //var respuestaOpenAi = openai_response(pregunta, intencion);
     var parametros = req.body['queryResult']['parameters']
     async function fallback(agent) {
         if (pregunta != 'como ingresar a gmail') {
@@ -59,9 +59,7 @@ app.post("/webhook", express.json(), (req, res) => {
     if (intencion == 'Default_Fallback_Intent') {
         let intentMap = new Map();
         intentMap.set('Default_Fallback_Intent', fallback);
-        setTimeout(function(){
-            agent.handleRequest(intentMap);
-        },2000)
+        agent.handleRequest(intentMap)
     } else {
         var asesores = extraerAsesor(parametros.email)
         Promise.all([asesores]).then(result => {
