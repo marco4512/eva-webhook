@@ -63,19 +63,11 @@ app.post("/webhook", express.json(), (req, res) => {
             let valores = Array.from(doc.data().email)
             valores.map(function (correo) {
                 if (correo == parametros.email.toLowerCase()) {
+                    agent.add(`${doc.id}`)
                     asesores.push(doc.id)
                 }
             })
-
         });
-        setTimeout(function () {
-            if (asesores.flat().length != 0) {
-                agent.add(`Aqui estan tus asesores`)
-                asesores.flat().map((asesor) => agent.add(`${asesor}`))
-            } else {
-                agent.add(`:c No encuentro a tu asesor`)
-            }
-        },3000)
     }
     let intentMap = new Map();
     if (intencion == 'Default_Fallback_Intent') {
