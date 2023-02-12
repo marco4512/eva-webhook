@@ -56,7 +56,7 @@ app.post("/webhook", express.json(), (req, res) => {
         }
     }
     async function enviarCorreoAsesor(agent) {
-        var asesores=[];
+        var asesores = [];
         const querySnapshot = await getDocs(collection(db, "Asesores"));
         querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
@@ -66,19 +66,22 @@ app.post("/webhook", express.json(), (req, res) => {
                     asesores.push(doc.id)
                 }
             })
+
         });
-        if (asesores.flat().length != 0) {
-            agent.add(`Aqui estan tus asesores`)
-            asesores.flat().map((asesor) => agent.add(`${asesor}`))
-        } else {
-            agent.add(`:c No encuentro a tu asesor`)
-        }
+        setTimeout(function () {
+            if (asesores.flat().length != 0) {
+                agent.add(`Aqui estan tus asesores`)
+                asesores.flat().map((asesor) => agent.add(`${asesor}`))
+            } else {
+                agent.add(`:c No encuentro a tu asesor`)
+            }
+        },3000)
     }
     let intentMap = new Map();
-    if(intencion=='Default_Fallback_Intent'){
-    intentMap.set('Default_Fallback_Intent', fallback);
-    }else{
-    intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
+    if (intencion == 'Default_Fallback_Intent') {
+        intentMap.set('Default_Fallback_Intent', fallback);
+    } else {
+        intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
     }
 
     agent.handleRequest(intentMap)
