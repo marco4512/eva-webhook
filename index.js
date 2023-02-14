@@ -8,6 +8,7 @@ import { async } from "@firebase/util";
 import { doc, getDoc,setDoc, query, where, updateDoc,getDocs, getFirestore, collection } from "firebase/firestore";
 import { db } from "./fireBaseFunctios/firebase.js";
 import { Configuration, OpenAIApi } from "openai";
+import {ResponderPreguta} from './fireBaseFunctios/consultarQuestions.js'
 const configuration = new Configuration({
     apiKey: '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',
 });
@@ -39,33 +40,9 @@ app.post("/webhook", express.json(), (req, res) => {
     //var respuestaOpenAi = openai_response(pregunta, intencion);
     var parametros = req.body['queryResult']['parameters']
     async function fallback(agent) {
-        const docRef = doc(db, "Questions", "SomeQuestions");
-        const questionRef = collection(db, "Questions");
-        const docSnap = await getDoc(docRef);
-        let newPregunta=String(pregunta).toLocaleLowerCase().replace('?','').replace('¿','') 
-        if (docSnap.exists()) {
-            if(docSnap.data()[newPregunta]!=undefined){
-                agent.add(docSnap.data()[newPregunta]);
-                console.log(docSnap.data()[newPregunta])
-            }else{
-                const response = await openai.createCompletion({
-                    model: "text-davinci-003",
-                    prompt: `Q:${newPregunta}
-                       A:`,
-                    temperature: 0,
-                    max_tokens: 100,
-                    top_p: 1,
-                    frequency_penalty: 0,
-                    presence_penalty: 0,
-                    stop: ["Q:"],
-                });
-                agent.add(`${response.data.choices[0].text}`);
-                console.log('Ingresando nueva Pregunta')
-                var newQuestion={};
-                newQuestion[newPregunta]=response.data.choices[0].text
-                await updateDoc(doc(questionRef, "SomeQuestions"),newQuestion);
-            }
-        }
+       var salida=ResponderPreguta(pregunta)
+       agent.add(`${salida}`)
+
     }
     if (intencion == 'Default_Fallback_Intent') {
         let intentMap = new Map();
@@ -90,10 +67,7 @@ app.post("/webhook", express.json(), (req, res) => {
             console.log('Razon de que truene ->', reason)
         })
     }
-
-    
 });
-
 /**Mostrar la consola de manera local */
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
