@@ -34,15 +34,14 @@ app.get("/", (req, res) => {
 });
 /**Desde Aqui recibimos las peticiones de dialogFlow */
 app.post("/webhook", express.json(), (req, res) => {
-    Promise(() => {
         const agent = new WebhookClient({ request: req, response: res });
         var pregunta = req.body['queryResult']['queryText'];
         var intencion = req.body['queryResult']['intent']['displayName']
         //var respuestaOpenAi = openai_response(pregunta, intencion);
         var parametros = req.body['queryResult']['parameters']
         async function fallback(agent) {
-            return new Promise(resolve => {
-                resolve(agent.add(`${ResponderPreguta(pregunta)}`))
+            Promise.all([ResponderPreguta])(res => {
+                agent.add(`${res}`)
             })
         }
         if (intencion == 'Default_Fallback_Intent') {
@@ -69,7 +68,6 @@ app.post("/webhook", express.json(), (req, res) => {
             })
         }
     })
-});
 /**Mostrar la consola de manera local */
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
