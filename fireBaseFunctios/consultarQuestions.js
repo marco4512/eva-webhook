@@ -44,7 +44,7 @@ async function ResponderPreguta(pregunta) {
                     presence_penalty: 0,
                     stop: ["Q:"],
                 });
-                respuesta=response.data.choices[0].text
+                respuesta='No tengo ese dato aun, dejame buscarlo por ti y pregunta de nuevo'
                 newQuestion[newFormatQuestion] = response.data.choices[0].text
                 await updateDoc(doc(questionRef,documento), newQuestion);
                 console.log('agregar a gmail')
@@ -62,7 +62,7 @@ async function ResponderPreguta(pregunta) {
                 presence_penalty: 0,
                 stop: ["Q:"],
             });
-            respuesta=response.data.choices[0].text;
+            respuesta='No tengo ese dato aun, dejame buscarlo por ti y pregunta de nuevo'
             newQuestion[newFormatQuestion] = response.data.choices[0].text;
             await setDoc(doc(db, "Questions", documento), newQuestion)
         }
