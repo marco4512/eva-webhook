@@ -32,6 +32,38 @@ app.use(
 app.get("/", (req, res) => {
     return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
+async function subirNuevoDoc(newQuestion, newFormatQuestion, documento) {
+    console.log('No esta, tenemos que crearlo')
+    const response = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: `Q:${newFormatQuestion}
+                   A:`,
+        temperature: 0,
+        max_tokens: 400,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+        stop: ["Q:"],
+    });
+    newQuestion[newFormatQuestion] = response.data.choices[0].text;
+    await setDoc(doc(db, "Questions", documento), newQuestion)
+}
+async function actualizarDoc(newQuestion, newFormatQuestion, documento) {
+    const response = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: `Q:${newFormatQuestion}
+       A:`,
+        temperature: 0,
+        max_tokens: 400,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+        stop: ["Q:"],
+    });
+    newQuestion[newFormatQuestion] = response.data.choices[0].text
+    await updateDoc(doc(questionRef, documento), newQuestion);
+    console.log('agregar a gmail')
+}
 /**Desde Aqui recibimos las peticiones de dialogFlow */
 app.post("/webhook", express.json(), (req, res) => {
     const agent = new WebhookClient({ request: req, response: res });
@@ -67,37 +99,11 @@ app.post("/webhook", express.json(), (req, res) => {
                 }
                 else {
                     agent.add(`No tengo ese dato aun, dejame buscarlo por ti y pregunta de nuevo`)
-                    const response = await openai.createCompletion({
-                        model: "text-davinci-003",
-                        prompt: `Q:${newFormatQuestion}
-                       A:`,
-                        temperature: 0,
-                        max_tokens: 400,
-                        top_p: 1,
-                        frequency_penalty: 0,
-                        presence_penalty: 0,
-                        stop: ["Q:"],
-                    });
-                    newQuestion[newFormatQuestion] = response.data.choices[0].text
-                    await updateDoc(doc(questionRef, documento), newQuestion);
-                    console.log('agregar a gmail')
+                    actualizarDoc(newQuestion, newFormatQuestion, documento)
                 }
             } else {
                 agent.add(`No tengo ese dato aun, dejame buscarlo por ti y pregunta de nuevo`)
-                console.log('No esta, tenemos que crearlo')
-                const response = await openai.createCompletion({
-                    model: "text-davinci-003",
-                    prompt: `Q:${newFormatQuestion}
-                   A:`,
-                    temperature: 0,
-                    max_tokens: 400,
-                    top_p: 1,
-                    frequency_penalty: 0,
-                    presence_penalty: 0,
-                    stop: ["Q:"],
-                });
-                newQuestion[newFormatQuestion] = response.data.choices[0].text;
-                await setDoc(doc(db, "Questions", documento), newQuestion)
+                subirNuevoDoc(newQuestion, newFormatQuestion, documento)
             }
         }
         //return ResponderPreguta(pregunta).then(res => { agent.add(`${res}`) })
