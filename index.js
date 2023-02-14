@@ -66,6 +66,7 @@ app.post("/webhook", express.json(), (req, res) => {
                     console.log(docSnap.data()[newFormatQuestion])
                 }
                 else {
+                    agent.add(`No tengo ese dato aun, dejame buscarlo por ti y pregunta de nuevo`)
                     const response = await openai.createCompletion({
                         model: "text-davinci-003",
                         prompt: `Q:${newFormatQuestion}
@@ -77,12 +78,12 @@ app.post("/webhook", express.json(), (req, res) => {
                         presence_penalty: 0,
                         stop: ["Q:"],
                     });
-                    agent.add(`No tengo ese dato aun, dejame buscarlo por ti y pregunta de nuevo`)
                     newQuestion[newFormatQuestion] = response.data.choices[0].text
                     await updateDoc(doc(questionRef, documento), newQuestion);
                     console.log('agregar a gmail')
                 }
             } else {
+                agent.add(`No tengo ese dato aun, dejame buscarlo por ti y pregunta de nuevo`)
                 console.log('No esta, tenemos que crearlo')
                 const response = await openai.createCompletion({
                     model: "text-davinci-003",
@@ -95,7 +96,6 @@ app.post("/webhook", express.json(), (req, res) => {
                     presence_penalty: 0,
                     stop: ["Q:"],
                 });
-                agent.add(`No tengo ese dato aun, dejame buscarlo por ti y pregunta de nuevo`)
                 newQuestion[newFormatQuestion] = response.data.choices[0].text;
                 await setDoc(doc(db, "Questions", documento), newQuestion)
             }
