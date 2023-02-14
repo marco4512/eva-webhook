@@ -34,42 +34,41 @@ app.get("/", (req, res) => {
 });
 /**Desde Aqui recibimos las peticiones de dialogFlow */
 app.post("/webhook", express.json(), (req, res) => {
-        const agent = new WebhookClient({ request: req, response: res });
-        var pregunta = req.body['queryResult']['queryText'];
-        var intencion = req.body['queryResult']['intent']['displayName']
-        //var respuestaOpenAi = openai_response(pregunta, intencion);
-        var parametros = req.body['queryResult']['parameters']
-        Promise.all([ResponderPreguta(pregunta)]).then(res => {
-            async function fallback(agent) {
-                    agent.add(`${res}`)
+    const agent = new WebhookClient({ request: req, response: res });
+    var pregunta = req.body['queryResult']['queryText'];
+    var intencion = req.body['queryResult']['intent']['displayName']
+    //var respuestaOpenAi = openai_response(pregunta, intencion);
+    var parametros = req.body['queryResult']['parameters']
+    Promise.all([ResponderPreguta(pregunta)]).then(res => {
+        setTimeout(async function fallback(agent) {
+            agent.add(`${res}`)
+        },3000)
+        let intentMap = new Map();
+        intentMap.set('Default_Fallback_Intent', fallback);
+        agent.handleRequest(intentMap)
+    })
+    if (intencion == 'Default_Fallback_Intent') {
+
+    } else {
+        var asesores = extraerAsesor(parametros.email)
+        Promise.all([asesores]).then(result => {
+            function enviarCorreoAsesor(agent) {
+                console.log(result.flat().length)
+                if (result.flat().length != 0) {
+                    agent.add(`Aqui estan tus asesores`)
+                    result.flat().map((asesor) => agent.add(`${asesor}`))
+                } else {
+                    agent.add(`:c No encuentro a tu asesor`)
+                }
             }
             let intentMap = new Map();
-            intentMap.set('Default_Fallback_Intent', fallback);
-            agent.handleRequest(intentMap)
+            intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
+            agent.handleRequest(intentMap);
+        }).catch(reason => {
+            console.log('Razon de que truene ->', reason)
         })
-      
-        if (intencion == 'Default_Fallback_Intent') {
-            
-        } else {
-            var asesores = extraerAsesor(parametros.email)
-            Promise.all([asesores]).then(result => {
-                function enviarCorreoAsesor(agent) {
-                    console.log(result.flat().length)
-                    if (result.flat().length != 0) {
-                        agent.add(`Aqui estan tus asesores`)
-                        result.flat().map((asesor) => agent.add(`${asesor}`))
-                    } else {
-                        agent.add(`:c No encuentro a tu asesor`)
-                    }
-                }
-                let intentMap = new Map();
-                intentMap.set('enviarCorreoAsesor', enviarCorreoAsesor);
-                agent.handleRequest(intentMap);
-            }).catch(reason => {
-                console.log('Razon de que truene ->', reason)
-            })
-        }
-    })
+    }
+})
 /**Mostrar la consola de manera local */
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
