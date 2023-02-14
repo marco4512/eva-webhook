@@ -41,8 +41,9 @@ app.post("/webhook", express.json(), (req, res) => {
     var parametros = req.body['queryResult']['parameters']
     async function fallback(agent) {
        var salida=ResponderPreguta(pregunta)
-       agent.add(`${salida}`)
-
+       Promise.all([salida]).then(result => {
+        agent.add(`${result}`)
+       })
     }
     if (intencion == 'Default_Fallback_Intent') {
         let intentMap = new Map();
