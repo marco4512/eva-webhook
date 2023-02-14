@@ -40,12 +40,15 @@ app.post("/webhook", express.json(), (req, res) => {
     //var respuestaOpenAi = openai_response(pregunta, intencion);
     var parametros = req.body['queryResult']['parameters']
     Promise.all([ResponderPreguta(pregunta)]).then(res => {
-        setTimeout(async function fallback(agent) {
+        async function fallback(agent) {
             agent.add(`${res}`)
-        },3000)
-        let intentMap = new Map();
-        intentMap.set('Default_Fallback_Intent', fallback);
-        agent.handleRequest(intentMap)
+        }
+        
+        setTimeout(function () {
+            let intentMap = new Map();
+            intentMap.set('Default_Fallback_Intent', fallback)
+            agent.handleRequest(intentMap)
+        }, 3000)
     })
     if (intencion == 'Default_Fallback_Intent') {
 
