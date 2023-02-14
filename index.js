@@ -39,19 +39,13 @@ app.post("/webhook", express.json(), (req, res) => {
     var intencion = req.body['queryResult']['intent']['displayName']
     //var respuestaOpenAi = openai_response(pregunta, intencion);
     var parametros = req.body['queryResult']['parameters']
-    Promise.all([ResponderPreguta(pregunta)]).then(res => {
-        async function fallback(agent) {
-            agent.add(`${res}`)
-        }
-        
-        setTimeout(function () {
-            let intentMap = new Map();
-            intentMap.set('Default_Fallback_Intent', fallback)
-            agent.handleRequest(intentMap)
-        }, 3000)
-    })
+    async function fallback(agent) {
+        return ResponderPreguta(pregunta).then(res => { agent.add(`${res}`) })
+    }
     if (intencion == 'Default_Fallback_Intent') {
-
+        let intentMap = new Map();
+        intentMap.set('Default_Fallback_Intent', fallback)
+        agent.handleRequest(intentMap)
     } else {
         var asesores = extraerAsesor(parametros.email)
         Promise.all([asesores]).then(result => {
