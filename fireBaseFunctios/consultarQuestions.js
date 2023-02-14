@@ -6,9 +6,10 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-const palabrasClave = ['gmail', 'drive', 'maps', 'docs', 'sheet', 'youtube',
-    'cloud', 'chrome', 'meet', 'calendario', 'formularios', 'formulario']
+
 async function ResponderPreguta(pregunta) {
+    const palabrasClave = ['gmail', 'drive', 'maps', 'docs', 'sheet', 'youtube',
+    'cloud', 'chrome', 'meet', 'calendario', 'formularios', 'formulario']
     let newFormatQuestion = String(pregunta).toLocaleLowerCase().replace('?', '').replace('¿', '').trim()
     let pregunta_separada = String(newFormatQuestion).split(' ')
     let categoria = []

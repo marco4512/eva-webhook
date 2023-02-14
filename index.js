@@ -71,7 +71,7 @@ app.post("/webhook", express.json(), (req, res) => {
                         prompt: `Q:${newFormatQuestion}
                            A:`,
                         temperature: 0,
-                        max_tokens: 100,
+                        max_tokens: 400,
                         top_p: 1,
                         frequency_penalty: 0,
                         presence_penalty: 0,
@@ -90,7 +90,7 @@ app.post("/webhook", express.json(), (req, res) => {
                     prompt: `Q:${newFormatQuestion}
                        A:`,
                     temperature: 0,
-                    max_tokens: 100,
+                    max_tokens: 400,
                     top_p: 1,
                     frequency_penalty: 0,
                     presence_penalty: 0,
