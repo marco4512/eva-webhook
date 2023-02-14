@@ -5,10 +5,10 @@ import { openai_response } from "./openAi/openAi_API.js"
 const app = express();
 import { WebhookClient } from 'dialogflow-fulfillment';
 import { async } from "@firebase/util";
-import { doc, getDoc,setDoc, query, where, updateDoc,getDocs, getFirestore, collection } from "firebase/firestore";
+import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, collection } from "firebase/firestore";
 import { db } from "./fireBaseFunctios/firebase.js";
 import { Configuration, OpenAIApi } from "openai";
-import {ResponderPreguta} from './fireBaseFunctios/consultarQuestions.js'
+import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js'
 const configuration = new Configuration({
     apiKey: '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',
 });
@@ -40,14 +40,14 @@ app.post("/webhook", express.json(), (req, res) => {
     //var respuestaOpenAi = openai_response(pregunta, intencion);
     var parametros = req.body['queryResult']['parameters']
     async function fallback(agent) {
-        return ResponderPreguta(pregunta).then((res)=>{
-            agent.add(`${res}`) }) 
+        return new Promise( resolve =>{
+            resolve(agent.add(`${ ResponderPreguta(pregunta)}`))
+        }) 
     }
     if (intencion == 'Default_Fallback_Intent') {
         let intentMap = new Map();
         intentMap.set('Default_Fallback_Intent', fallback);
-        
-        agent.handleRequest(intentMap)
+        setInterval(agent.handleRequest(intentMap),3000)
     } else {
         var asesores = extraerAsesor(parametros.email)
         Promise.all([asesores]).then(result => {
