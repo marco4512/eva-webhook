@@ -40,7 +40,7 @@ app.post("/webhook", express.json(), (req, res) => {
         //var respuestaOpenAi = openai_response(pregunta, intencion);
         var parametros = req.body['queryResult']['parameters']
         async function fallback(agent) {
-            Promise.all([ResponderPreguta])(res => {
+            Promise(ResponderPreguta(pregunta)).then(res => {
                 agent.add(`${res}`)
             })
         }
