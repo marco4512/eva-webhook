@@ -47,7 +47,7 @@ app.post("/webhook", express.json(), (req, res) => {
     if (intencion == 'Default_Fallback_Intent') {
         let intentMap = new Map();
         intentMap.set('Default_Fallback_Intent', fallback);
-        setInterval(agent.handleRequest(intentMap),3000)
+        setInterval(agent.handleRequest(intentMap),6000)
     } else {
         var asesores = extraerAsesor(parametros.email)
         Promise.all([asesores]).then(result => {
