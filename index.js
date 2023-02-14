@@ -61,8 +61,8 @@ app.post("/webhook", express.json(), (req, res) => {
                 console.log('si extiste')
                 console.log(newFormatQuestion)
                 if (docSnap.data()[newFormatQuestion] != undefined) {
-                    agent.add(`${docSnap.data()[newFormatQuestion]}`)
-                    //respuesta=docSnap.data()[newFormatQuestion]
+                    //agent.add(`${docSnap.data()[newFormatQuestion]}`)
+                    respuesta=docSnap.data()[newFormatQuestion]
                     console.log(docSnap.data()[newFormatQuestion])
                 }
                 else {
@@ -77,8 +77,8 @@ app.post("/webhook", express.json(), (req, res) => {
                         presence_penalty: 0,
                         stop: ["Q:"],
                     });
-                    agent.add(`${response.data.choices[0].text}`)
-                    //respuesta=response.data.choices[0].text
+                    //agent.add(`${response.data.choices[0].text}`)
+                    respuesta=response.data.choices[0].text
                     newQuestion[newFormatQuestion] = response.data.choices[0].text
                     await updateDoc(doc(questionRef,documento), newQuestion);
                     console.log('agregar a gmail')
@@ -96,12 +96,13 @@ app.post("/webhook", express.json(), (req, res) => {
                     presence_penalty: 0,
                     stop: ["Q:"],
                 });
-                agent.add(`${response.data.choices[0].text}`)
-                //respuesta=response.data.choices[0].text;
+                //agent.add(`${response.data.choices[0].text}`)
+                respuesta=response.data.choices[0].text;
                 newQuestion[newFormatQuestion] = response.data.choices[0].text;
                 await setDoc(doc(db, "Questions", documento), newQuestion)
             }
-        }    
+        }
+        agent.add(`${respuesta}`)    
     }
     if (intencion == 'Default_Fallback_Intent') {
         let intentMap = new Map();
