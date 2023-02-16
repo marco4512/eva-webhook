@@ -9,6 +9,7 @@ import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, co
 import { db } from "./fireBaseFunctios/firebase.js";
 import { Configuration, OpenAIApi } from "openai";
 import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js'
+import {formatResponseForDialogflow} from './DialogFlowFunctions/Response.js';
 const configuration = new Configuration({
     apiKey: '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',
 });
@@ -35,13 +36,7 @@ app.get("/", (req, res) => {
 /**Desde Aqui recibimos las peticiones de dialogFlow */
 app.post("/webhook", express.json(), (req, res) => {
     console.log(req.body)
-    let responseData = formatResponseForDialogflow([
-        'This is a sample response from webhook.',
-        'Another sample response.'
-    ],
-        '',
-        '',
-        '');
+    let responseData = formatResponseForDialogflow(['Respuesta Desde el Hook','Another sample response.'],'','','');
     res.send(responseData);
 })
 
@@ -50,36 +45,4 @@ app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
 })
 
-const formatResponseForDialogflow = (texts, sessionInfo, targetFlow, targetPage) => {
-    var messages = []
-    texts.forEach(text => {
-        messages.push(
-            {
-                text: {
-                    text: [text],
-                    redactedText: [text]
-                },
-                responseType: 'HANDLER_PROMPT',
-                source: 'VIRTUAL_AGENT'
-            }
-        );
-    });
-    let responseData = {
-        fulfillment_response: {
-            messages: messages
-        }
-    };
-    if (sessionInfo !== '') {
-        responseData['sessionInfo'] = sessionInfo;
-    }
 
-    if (targetFlow !== '') {
-        responseData['targetFlow'] = targetFlow;
-    }
-
-    if (targetPage !== '') {
-        responseData['targetPage'] = targetPage;
-    }
-
-    return responseData
-};
