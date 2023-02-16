@@ -51,9 +51,7 @@ app.listen(port, () => {
 })
 
 const formatResponseForDialogflow = (texts, sessionInfo, targetFlow, targetPage) => {
-
-    messages = []
-
+    var messages = []
     texts.forEach(text => {
         messages.push(
             {
@@ -66,13 +64,11 @@ const formatResponseForDialogflow = (texts, sessionInfo, targetFlow, targetPage)
             }
         );
     });
-
     let responseData = {
         fulfillment_response: {
             messages: messages
         }
     };
-
     if (sessionInfo !== '') {
         responseData['sessionInfo'] = sessionInfo;
     }
