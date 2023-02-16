@@ -35,19 +35,55 @@ app.get("/", (req, res) => {
 /**Desde Aqui recibimos las peticiones de dialogFlow */
 app.post("/webhook", express.json(), (req, res) => {
     console.log(req.body)
-    res.status(200).json({
-        "fulfillmentMessages": [
-            {
-                "text": {
-                    "text": [
-                        "Text response from webhook"
-                    ]
-                }
-            }
-        ]
-    });
+    let responseData = formatResponseForDialogflow([
+        'This is a sample response from webhook.',
+        'Another sample response.'
+    ],
+        '',
+        '',
+        '');
+    res.send(responseData);
 })
+
 /**Mostrar la consola de manera local */
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
 })
+
+const formatResponseForDialogflow = (texts, sessionInfo, targetFlow, targetPage) => {
+
+    messages = []
+
+    texts.forEach(text => {
+        messages.push(
+            {
+                text: {
+                    text: [text],
+                    redactedText: [text]
+                },
+                responseType: 'HANDLER_PROMPT',
+                source: 'VIRTUAL_AGENT'
+            }
+        );
+    });
+
+    let responseData = {
+        fulfillment_response: {
+            messages: messages
+        }
+    };
+
+    if (sessionInfo !== '') {
+        responseData['sessionInfo'] = sessionInfo;
+    }
+
+    if (targetFlow !== '') {
+        responseData['targetFlow'] = targetFlow;
+    }
+
+    if (targetPage !== '') {
+        responseData['targetPage'] = targetPage;
+    }
+
+    return responseData
+};
