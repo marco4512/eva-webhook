@@ -99,6 +99,8 @@ app.post("/webhook", express.json(), (req, res) => {
                 newQuestion[newFormatQuestion] = response.data.choices[0].text;
                 await setDoc(doc(db, "Questions", documento), newQuestion)
             }
+        }else{
+            agent.add(`Oh, Lo siento no tengo muy claro tu pregunta.`)
         }
         //return ResponderPreguta(pregunta).then(res => { agent.add(`${res}`) })
     }
