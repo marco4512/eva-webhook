@@ -9,7 +9,7 @@ import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, co
 import { db } from "./fireBaseFunctios/firebase.js";
 import { Configuration, OpenAIApi } from "openai";
 import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js'
-import {formatResponseForDialogflow} from './DialogFlowFunctions/Response.js';
+import { formatResponseForDialogflow } from './DialogFlowFunctions/Response.js';
 const configuration = new Configuration({
     apiKey: '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',
 });
@@ -35,9 +35,19 @@ app.get("/", (req, res) => {
 });
 /**Desde Aqui recibimos las peticiones de dialogFlow */
 app.post("/webhook", express.json(), (req, res) => {
+    let tag = req.body.fulfillmentInfo.tag
+    let pregunta = req.body.text;
+    switch (tag) {
+        case 'BuscarPregunta':
+            Promise.all([ResponderPreguta(pregunta)]).then(respuesta => {
+                let responseData = formatResponseForDialogflow([respuesta], '', '', '');
+                res.send(responseData);
+            }
+            )
+            break
+    }
     console.log(req.body)
-    let responseData = formatResponseForDialogflow(['Respuesta Desde el Hook','Another sample response.'],'','','');
-    res.send(responseData);
+
 })
 
 /**Mostrar la consola de manera local */
