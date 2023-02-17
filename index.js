@@ -37,13 +37,16 @@ app.get("/", (req, res) => {
 app.post("/webhook", express.json(), (req, res) => {
     let tag = req.body.fulfillmentInfo.tag
     let pregunta = req.body.text;
+    console.log(tag)
     switch (tag) {
         case 'BuscarPregunta':
+            /**
             Promise.all([ResponderPreguta(pregunta)]).then(respuesta => {
                 let responseData = formatResponseForDialogflow([respuesta], '', '', '');
                 res.send(responseData);
             }
-            )
+            )*/
+            console.log(pregunta)
             break
     }
     console.log(req.body)
