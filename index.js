@@ -40,12 +40,11 @@ app.post("/webhook", express.json(), (req, res) => {
     console.log(tag)
     switch (tag) {
         case 'BuscarPregunta':
-            /**
             Promise.all([ResponderPreguta(pregunta)]).then(respuesta => {
                 let responseData = formatResponseForDialogflow([respuesta], '', '', '');
                 res.send(responseData);
             }
-            )*/
+            )
             console.log(pregunta)
             break
     }
