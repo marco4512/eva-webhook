@@ -8,11 +8,9 @@ import { async } from "@firebase/util";
 import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, collection } from "firebase/firestore";
 import { db } from "./fireBaseFunctios/firebase.js";
 import { Configuration, OpenAIApi } from "openai";
-import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js'
+import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js';
 import { formatResponseForDialogflow } from './DialogFlowFunctions/Response.js';
-const configuration = new Configuration({
-    apiKey: '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',
-});
+
 const openai = new OpenAIApi(configuration);
 //Para iniciar en el entorno local
 const port = process.env.PORT || 3000;
@@ -41,7 +39,7 @@ app.post("/webhook", express.json(), (req, res) => {
     switch (tag) {
         case 'BuscarPregunta':
             Promise.all([ResponderPreguta(pregunta)]).then(respuesta => {
-                let responseData = formatResponseForDialogflow([respuesta], '', '', '');
+                let responseData = formatResponseForDialogflow([respuesta,'Eh respondido tu pregunta ?'], '', '', '');
                 res.send(responseData);
             }
             )
@@ -49,7 +47,6 @@ app.post("/webhook", express.json(), (req, res) => {
             break
     }
     console.log(req.body)
-
 })
 
 /**Mostrar la consola de manera local */

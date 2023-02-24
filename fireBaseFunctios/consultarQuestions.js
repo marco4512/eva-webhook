@@ -1,6 +1,7 @@
 import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, collection } from "firebase/firestore";
 import { db } from "./firebase.js";
 import { Configuration, OpenAIApi } from "openai";
+import {crear_variaciones} from "../BuscarSinonimo.js";
 const configuration = new Configuration({
     apiKey: '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',
 });
@@ -44,9 +45,11 @@ async function ResponderPreguta(pregunta) {
                     presence_penalty: 0,
                     stop: ["Q:"],
                 });
+
                 respuesta= response.data.choices[0].text
-                newQuestion[newFormatQuestion] = response.data.choices[0].text
-                await updateDoc(doc(questionRef,documento), newQuestion);
+                crear_variaciones(pregunta, respuesta, documento)
+                //newQuestion[newFormatQuestion] = response.data.choices[0].text
+                //await updateDoc(doc(questionRef,documento), newQuestion);
                 console.log('agregar a gmail')
             }
         } else {
@@ -63,8 +66,9 @@ async function ResponderPreguta(pregunta) {
                 stop: ["Q:"],
             });
             respuesta=response.data.choices[0].text;
-            newQuestion[newFormatQuestion] = response.data.choices[0].text;
-            await setDoc(doc(db, "Questions", documento), newQuestion)
+            crear_variaciones(pregunta, respuesta, documento)
+            //newQuestion[newFormatQuestion] = response.data.choices[0].text;
+            //await setDoc(doc(db, "Questions", documento), newQuestion)
         }
     }else{
         respuesta='Lo lamento no se responder eso, solo estoy enfocado en google'
