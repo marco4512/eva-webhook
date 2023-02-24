@@ -7,11 +7,9 @@ import { WebhookClient } from 'dialogflow-fulfillment';
 import { async } from "@firebase/util";
 import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, collection } from "firebase/firestore";
 import { db } from "./fireBaseFunctios/firebase.js";
-import { Configuration, OpenAIApi } from "openai";
 import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js';
 import { formatResponseForDialogflow } from './DialogFlowFunctions/Response.js';
 
-const openai = new OpenAIApi(configuration);
 //Para iniciar en el entorno local
 const port = process.env.PORT || 3000;
 // for parsing json
