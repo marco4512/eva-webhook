@@ -37,7 +37,7 @@ app.post("/webhook", express.json(), (req, res) => {
     switch (tag) {
         case 'BuscarPregunta':
             Promise.all([ResponderPreguta(pregunta)]).then(respuesta => {
-                let responseData = formatResponseForDialogflow([respuesta,'Eh respondido tu pregunta ?'], '', '', '');
+                let responseData = formatResponseForDialogflow([respuesta], '', '', '');
                 res.send(responseData);
             }
             )
