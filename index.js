@@ -9,6 +9,7 @@ import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, co
 import { db } from "./fireBaseFunctios/firebase.js";
 import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js';
 import { formatResponseForDialogflow } from './DialogFlowFunctions/Response.js';
+import { AgregarNuevaPregunta } from "./Sheet/SheetFunctions.js";
 
 //Para iniciar en el entorno local
 const port = process.env.PORT || 3000;
@@ -39,6 +40,7 @@ app.post("/webhook", express.json(), (req, res) => {
             Promise.all([ResponderPreguta(pregunta)]).then(respuesta => {
                 let responseData = formatResponseForDialogflow([respuesta], '', '', '');
                 res.send(responseData);
+                AgregarNuevaPregunta(pregunta, respuesta, req.body.sessionInfo.session)
             }
             )
             console.log(pregunta)
