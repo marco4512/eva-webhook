@@ -49,8 +49,8 @@ app.post("/webhook", express.json(), (req, res) => {
             )
         case 'ResponderSi':
             ResponderConUnSi(sesionId)
-            //let responseDataSi = formatResponseForDialogflow(['¿En Que mas puedo Ayudarte ?'], '', '', '');
-            //res.send(responseDataSi);
+            let responseDataSi = formatResponseForDialogflow(['¿En Que mas puedo Ayudarte ?'], '', '', '');
+            res.send(responseDataSi);
             break
         case 'ResponderNo':
             //ResponderConUnNo(sesionId)
