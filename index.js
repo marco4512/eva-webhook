@@ -42,7 +42,6 @@ app.post("/webhook", express.json(), (req, res) => {
             Promise.all([ResponderPreguta(pregunta)]).then(respuesta => {
                 let responseData = formatResponseForDialogflow([respuesta], '', '', '');
                 res.send(responseData);
-                //console.log(req.body.sessionInfo.session)
                 if (respuesta != 'Lo lamento no se responder eso, solo estoy enfocado en google') {
                     AgregarNuevaPregunta(pregunta, respuesta, sesionId)
                 }
@@ -50,12 +49,12 @@ app.post("/webhook", express.json(), (req, res) => {
             )
         case 'ResponderSi':
             ResponderConUnSi(sesionId)
-            let responseDataSi = formatResponseForDialogflow(['¿En Que mas puedo Ayudarte ?'], '', '', '');
-            res.send(responseDataSi);
+            //let responseDataSi = formatResponseForDialogflow(['¿En Que mas puedo Ayudarte ?'], '', '', '');
+            //res.send(responseDataSi);
             break
         case 'ResponderNo':
-            ResponderConUnNo(sesionId)
-            let responseDataNo = formatResponseForDialogflow(['¿En Que mas puedo Ayudarte ?'], '', '', '');
+            //ResponderConUnNo(sesionId)
+            //let responseDataNo = formatResponseForDialogflow(['¿En Que mas puedo Ayudarte ?'], '', '', '');
             res.send(responseDataNo);
     }
     //console.log(req.body)
