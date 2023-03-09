@@ -47,20 +47,34 @@ app.post("/webhook", express.json(), (req, res) => {
                 }
             }
             )
+    }
+})
+app.post("/ResponderSi", express.json(), (req, res) => {
+    let tag = req.body.fulfillmentInfo.tag
+    let pregunta = req.body.text;
+    let sesionId = req.body.sessionInfo.session;
+    console.log(tag)
+    switch (tag) {
         case 'ResponderSi':
             ResponderConUnSi(sesionId)
             let responseDataSi = formatResponseForDialogflow(['¿En Que mas puedo Ayudarte ?'], '', '', '');
             res.send(responseDataSi);
             break
-        case 'ResponderNo':
-            //ResponderConUnNo(sesionId)
-            //let responseDataNo = formatResponseForDialogflow(['¿En Que mas puedo Ayudarte ?'], '', '', '');
-            res.send(responseDataNo);
     }
-    //console.log(req.body)
 })
-
-/**Mostrar la consola de manera local */
+app.post("/ResponderNo", express.json(), (req, res) => {
+    let tag = req.body.fulfillmentInfo.tag
+    let pregunta = req.body.text;
+    let sesionId = req.body.sessionInfo.session;
+    console.log(tag)
+    switch (tag) {
+        case 'ResponderNo':
+            ResponderConUnNo(sesionId)
+            let responseDataSi = formatResponseForDialogflow(['¿En Que mas puedo Ayudarte ?'], '', '', '');
+            res.send(responseDataSi);
+            break
+    }
+})
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
 })
