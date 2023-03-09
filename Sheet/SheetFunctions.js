@@ -4,7 +4,7 @@ var requestOptions = {
     method: 'GET',
     redirect: 'follow'
 };
-function AgregarNuevaPregunta(Pregunta, Respuesta, IdSesion) {
+async function AgregarNuevaPregunta(Pregunta, Respuesta, IdSesion) {
     var NuevaPregunta = "?Action=NuevaPregunta&Pregunta="+Pregunta+"&Respuesta="+Respuesta+"&ISesion="+IdSesion;
     var urlNuevaPregunta = apiBack + NuevaPregunta;
     fetch(urlNuevaPregunta, requestOptions)
@@ -12,13 +12,13 @@ function AgregarNuevaPregunta(Pregunta, Respuesta, IdSesion) {
         .then(result => console.log(result))
         .catch(error => console.log('error', error));
 }
-function ResponderConUnSi(IdSesion) {
+async function ResponderConUnSi(IdSesion) {
     var ResponderSI = '?Action=ResponderSI&SesionId=' + IdSesion;
     var urlResponderSI = apiBack + ResponderSI;
     fetch(urlResponderSI, requestOptions)
 }
 
-function ResponderConUnNo(IdSesion) {
+async function ResponderConUnNo(IdSesion) {
     var ResponderNo = '?Action=RespodenderNo&SesionId=' + IdSesion;
     var urlResponderNo = apiBack + ResponderNo;
     fetch(urlResponderNo, requestOptions)

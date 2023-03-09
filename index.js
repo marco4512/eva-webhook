@@ -43,7 +43,9 @@ app.post("/webhook", express.json(), (req, res) => {
                 let responseData = formatResponseForDialogflow([respuesta], '', '', '');
                 res.send(responseData);
                 //console.log(req.body.sessionInfo.session)
-                AgregarNuevaPregunta(pregunta, respuesta,sesionId)
+                if (respuesta != 'Lo lamento no se responder eso, solo estoy enfocado en google') {
+                    AgregarNuevaPregunta(pregunta, respuesta, sesionId)
+                }
             }
             )
         case 'ResponderSi':
