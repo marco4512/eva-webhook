@@ -5,12 +5,13 @@ import { openai_response } from "./openAi/openAi_API.js"
 const app = express();
 import { WebhookClient } from 'dialogflow-fulfillment';
 import { async } from "@firebase/util";
-import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, collection } from "firebase/firestore";
+import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, collection, CACHE_SIZE_UNLIMITED } from "firebase/firestore";
 import { db } from "./fireBaseFunctios/firebase.js";
 import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js';
 import { formatResponseForDialogflow } from './DialogFlowFunctions/Response.js';
 import { AgregarNuevaPregunta } from "./Sheet/SheetFunctions.js";
-
+import { ResponderConUnSi } from "./Sheet/SheetFunctions.js";
+import { ResponderConUnNo } from "./Sheet/SheetFunctions.js";
 //Para iniciar en el entorno local
 const port = process.env.PORT || 3000;
 // for parsing json
@@ -34,20 +35,24 @@ app.get("/", (req, res) => {
 app.post("/webhook", express.json(), (req, res) => {
     let tag = req.body.fulfillmentInfo.tag
     let pregunta = req.body.text;
+    let sesionId = req.body.sessionInfo.session;
     console.log(tag)
     switch (tag) {
         case 'BuscarPregunta':
             Promise.all([ResponderPreguta(pregunta)]).then(respuesta => {
                 let responseData = formatResponseForDialogflow([respuesta], '', '', '');
                 res.send(responseData);
-                console.log(req.body.sessionInfo.session)
-                AgregarNuevaPregunta(pregunta, respuesta, req.body.sessionInfo.session)
+                //console.log(req.body.sessionInfo.session)
+                AgregarNuevaPregunta(pregunta, respuesta,sesionId)
             }
             )
-            console.log(pregunta)
+        case 'ResponderSi':
+            ResponderConUnSi(sesionId)
             break
+        case 'ResponderNo':
+            ResponderConUnNo(sesionId)
     }
-    console.log(req.body)
+    //console.log(req.body)
 })
 
 /**Mostrar la consola de manera local */
