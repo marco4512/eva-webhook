@@ -1,11 +1,11 @@
 
-var apiBack = 'https://script.google.com/macros/s/AKfycbyldW4yqTzXtrqIhbC_AS2ZHlGwT694duUSvonayCQMX94SwcSg1o9jcxDPfxAeM8Y/exec';
+var apiBack = 'https://script.google.com/macros/s/AKfycbwytnvf5oPxXecNm4q7fQVT5ovlNYxkGLx6plycLTCPMzCUsLI7B15w9piAceX5QGA/exec';
 var requestOptions = {
     method: 'GET',
     redirect: 'follow'
 };
 function AgregarNuevaPregunta(Pregunta, Respuesta, IdSesion) {
-    var NuevaPregunta = "?Action=NuevaPregunta&nuevaPregunta=" + Pregunta + " ^ " + Respuesta + " ^ " + IdSesion;
+    var NuevaPregunta = "?Action=NuevaPregunta&nuevaPregunta=" + Pregunta + "^" + Respuesta + "^" + IdSesion;
     var urlNuevaPregunta = apiBack + NuevaPregunta;
     fetch(urlNuevaPregunta, requestOptions)
         .then(response => response.text())
