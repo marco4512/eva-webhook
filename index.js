@@ -40,6 +40,7 @@ app.post("/webhook", express.json(), (req, res) => {
             Promise.all([ResponderPreguta(pregunta)]).then(respuesta => {
                 let responseData = formatResponseForDialogflow([respuesta], '', '', '');
                 res.send(responseData);
+                console.log(req.body.sessionInfo.session)
                 AgregarNuevaPregunta(pregunta, respuesta, req.body.sessionInfo.session)
             }
             )

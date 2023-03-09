@@ -8,6 +8,9 @@ function AgregarNuevaPregunta(Pregunta, Respuesta, IdSesion) {
     var NuevaPregunta = "?Action=NuevaPregunta&nuevaPregunta=" + Pregunta + "," + Respuesta + "," + IdSesion;
     var urlNuevaPregunta = apiBack + NuevaPregunta;
     fetch(urlNuevaPregunta, requestOptions)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
 }
 function ResponderConUnSi(IdSesion) {
     var ResponderSI = '?Action=ResponderSI&SesionId=' + IdSesion;
@@ -20,4 +23,4 @@ function ResponderConUnNo(IdSesion) {
     var urlResponderNo = apiBack + ResponderNo;
     fetch(urlResponderNo, requestOptions)
 }
-export {AgregarNuevaPregunta,ResponderConUnSi,ResponderConUnNo}
+export { AgregarNuevaPregunta, ResponderConUnSi, ResponderConUnNo }
