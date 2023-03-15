@@ -78,7 +78,7 @@ app.post("/ResponderNo", express.json(), (req, res) => {
 app.post("/SolicitarTiket", express.json(), (req, res) => {
     let tag = req.body.fulfillmentInfo.tag
     let pregunta = req.body.text;
-    let Parametros = req.body['parameters'];
+    let Parametros = req.body['sessionInfo']['parameters'];
     console.log('Request del dialog', req.body)
     console.log(tag)
     console.log(Parametros)
