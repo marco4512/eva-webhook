@@ -75,6 +75,15 @@ app.post("/ResponderNo", express.json(), (req, res) => {
             break
     }
 })
+app.post("/SolicitarTiket", express.json(), (req, res) => {
+    let tag = req.body.fulfillmentInfo.tag
+    let pregunta = req.body.text;
+    let sesionId = req.body.sessionInfo.session;
+    console.log('Request del dialog',req.body)
+    console.log(tag)
+    let responseDataSi = formatResponseForDialogflow(['Se recibio en el back'], '', '', '');
+    res.send(responseDataSi);
+})
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
 })
