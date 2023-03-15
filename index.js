@@ -78,11 +78,27 @@ app.post("/ResponderNo", express.json(), (req, res) => {
 app.post("/SolicitarTiket", express.json(), (req, res) => {
     let tag = req.body.fulfillmentInfo.tag
     let pregunta = req.body.text;
-    let sesionId = req.body.sessionInfo.session;
-    console.log('Request del dialog',req.body)
+    let Parametros = req.body.parameters;
+    console.log('Request del dialog', req.body)
     console.log(tag)
-    let responseDataSi = formatResponseForDialogflow(['Se recibio en el back'], '', '', '');
-    res.send(responseDataSi);
+    let nombre = Parametros.nombre
+    let correo = Parametros.correoelectronico
+    let Problema = Parametros.problema
+    let status = 'Pendiente';
+    var asesores = extraerAsesor(correo)
+    Promise.all([asesores]).then(resultado => {
+        let asesor;
+        if (resultado.flat().length != 0) {
+            asesor = resultado.flat()[0]
+        } else {
+            asesor = 'No se tiene asesor';
+        }
+
+        Promise.all([SubirUnTiket(nombre, Problema, correo, asesor, status)]).then(id => {
+            let responseDataSi = formatResponseForDialogflow(['Listo, tu Numero de Tiket es el siguiente',id], '', '', '');
+            res.send(responseDataSi);
+        })
+    })
 })
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
