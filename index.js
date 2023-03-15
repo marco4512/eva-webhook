@@ -11,7 +11,7 @@ import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js';
 import { formatResponseForDialogflow } from './DialogFlowFunctions/Response.js';
 import { AgregarNuevaPregunta } from "./Sheet/SheetFunctions.js";
 import { ResponderConUnSi } from "./Sheet/SheetFunctions.js";
-import { ResponderConUnNo } from "./Sheet/SheetFunctions.js";
+import { ResponderConUnNo,SubirUnTiket } from "./Sheet/SheetFunctions.js";
 //Para iniciar en el entorno local
 const port = process.env.PORT || 3000;
 // for parsing json
