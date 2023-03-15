@@ -78,12 +78,13 @@ app.post("/ResponderNo", express.json(), (req, res) => {
 app.post("/SolicitarTiket", express.json(), (req, res) => {
     let tag = req.body.fulfillmentInfo.tag
     let pregunta = req.body.text;
-    let Parametros = req.body.parameters;
+    let Parametros = req.body['parameters'];
     console.log('Request del dialog', req.body)
     console.log(tag)
-    let nombre = Parametros.nombre
-    let correo = Parametros.correoelectronico
-    let Problema = Parametros.problema
+    console.log(Parametros)
+    let nombre = Parametros['nombre']
+    let correo = Parametros['correoelectronico']
+    let Problema = Parametros['problema']
     let status = 'Pendiente';
     var asesores = extraerAsesor(correo)
     Promise.all([asesores]).then(resultado => {
