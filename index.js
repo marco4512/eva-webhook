@@ -110,9 +110,10 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
     console.log(Parametros)
     let idTiket = Parametros['idtiket']
     Promise.all([ExtraerEstado(idTiket)]).then(tiket => {
-        console.log('entramos aqui',tiket)
+        console.log('entramos aqui', tiket)
         let respuestaDelBot;
         if (tiket.length != 0) {
+            console.log('entrando al if')
             let Nombre = tiket['Nombre']
             let asesor = tiket['Asesor']
             let status = tiket['Status']
@@ -121,6 +122,9 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
                 case 'Pendiente':
                     respuestaDelBot = `Hola ${Nombre} Por el momento tu asesor ${asesor} 
                                 esta por resolver  tu problema :'${problema} `;
+                    console.log(' vamos a enviar esto',respuestaDelBot, typeof(respuestaDelBot))
+                    let responseDataSi = formatResponseForDialogflow([String(respuestaDelBot)], '', '', '');
+                    res.send(responseDataSi);
                     break
                 case 'EnProceso':
                     respuestaDelBot = `Hola ${Nombre} Por el momento tu asesor ${asesor} 
@@ -130,12 +134,8 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
                     respuestaDelBot = `Hola ${Nombre} tu asesor ${asesor} 
                     ya  resolvio  tu problema :'${problema} `;
             }
-            let responseDataSi = formatResponseForDialogflow([respuestaDelBot,'respuesta'], '', '', '');
-            res.send(responseDataSi);
-        }else{
+        } else {
             respuestaDelBot = `No encuentro el tiket con numero ${idTiket}`;
-            let responseDataSi = formatResponseForDialogflow([respuestaDelBot,'Respuesta'], '', '', '');
-            res.send(responseDataSi);
         }
 
     })
