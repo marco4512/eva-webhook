@@ -1,5 +1,5 @@
 import express from "express";
-import bodyParser, { json } from "body-parser";
+
 import { extraerAsesor } from "./fireBaseFunctios/firebaseFunction.js";
 import { openai_response } from "./openAi/openAi_API.js"
 const app = express();
@@ -114,7 +114,7 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
         let respuestaDelBot;
         if (tiket.length != 0) {
             console.log('entrando al if')
-            let tiket2=JSON.parse(tiket)
+            let tiket2= JSON.parse(tiket)
             let Nombre = tiket2['Nombre']
             let asesor = tiket2['Asesor']
             let status = tiket2['Status']
