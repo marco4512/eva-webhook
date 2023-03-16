@@ -110,6 +110,7 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
     console.log(Parametros)
     let idTiket = Parametros['idtiket']
     Promise.all([ExtraerEstado(idTiket)]).then(tiket => {
+        console.log('entramos aqui')
         let respuestaDelBot;
         if (tiket.length != 0) {
             let Nombre = tiket['Nombre']
