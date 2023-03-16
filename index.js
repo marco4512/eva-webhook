@@ -108,7 +108,7 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
     console.log('Request del dialog', req.body)
     console.log(tag)
     console.log(Parametros)
-    let idTiket = Parametros['idTiket']
+    let idTiket = Parametros['idtiket']
     Promise.all([ExtraerEstado(idTiket)]).then(tiket => {
         let respuestaDelBot;
         if (tiket.length != 0) {
