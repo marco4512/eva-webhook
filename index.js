@@ -112,7 +112,7 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
     Promise.all([ExtraerEstado(idTiket)]).then(tiket => {
         console.log('entramos aqui', tiket)
         let respuestaDelBot;
-        if (!tiket.includes('DOCTYPE')) {
+        if (JSON.parse(tiket)) {
             console.log('entrando al if')
             let tiket2= JSON.parse(tiket)
             let Nombre = tiket2['Nombre']
@@ -128,11 +128,11 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
                     break
                 case 'EnProceso':
                     respuestaDelBot = `Hola ${Nombre} Por el momento tu asesor ${asesor} 
-                                esta resolviendo  tu problema :'${problema} `;
+                                esta resolviendo  tu problema  "${problema} "`;
                     break
                 case 'Resuelto':
                     respuestaDelBot = `Hola ${Nombre} tu asesor ${asesor} 
-                    ya  resolvio  tu problema :'${problema} `;
+                    ya  resolvio  tu problema "${problema}" `;
             }
         } else {
             respuestaDelBot = `No encuentro el tiket con numero ${idTiket}`;
