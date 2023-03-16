@@ -111,8 +111,9 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
     let idTiket = Parametros['idtiket']
     Promise.all([ExtraerEstado(idTiket)]).then(tiket => {
         console.log('entramos aqui', tiket)
+        let error='<!DOCTYPE html><html><head><link rel="shortcut icon" href="//ssl.gstatic.com/docs/script/images/favicon.ico"><title>Error</title><style type="text/css" nonce="C5keXU9J4L2tjzI5A-M5tw">body {background-color: #fff; margin: 0; padding: 0;}.errorMessage {font-family: Arial,sans-serif; font-size: 12pt; font-weight: bold; line-height: 150%; padding-top: 25px;}</style></head><body style="margin:20px"><div><img alt="Google Apps Script" src="//ssl.gstatic.com/docs/script/images/logo.png"></div><div style="text-align:center;font-family:monospace;margin:50px auto 0;max-width:600px">TypeError: Cannot read properties of undefined (reading &#39;length&#39;) (line 106, file &quot;Código&quot;)</div></body></html>'
         let respuestaDelBot;
-        if (JSON.parse(tiket)) {
+        if (tiket!=error) {
             console.log('entrando al if')
             let tiket2= JSON.parse(tiket)
             let Nombre = tiket2['Nombre']
