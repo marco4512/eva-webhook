@@ -130,11 +130,11 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
                     respuestaDelBot = `Hola ${Nombre} tu asesor ${asesor} 
                     ya  resolvio  tu problema :'${problema} `;
             }
-            let responseDataSi = formatResponseForDialogflow([respuestaDelBot], '', '', '');
+            let responseDataSi = formatResponseForDialogflow([respuestaDelBot,'respuesta'], '', '', '');
             res.send(responseDataSi);
         }else{
             respuestaDelBot = `No encuentro el tiket con numero ${idTiket}`;
-            let responseDataSi = formatResponseForDialogflow([respuestaDelBot], '', '', '');
+            let responseDataSi = formatResponseForDialogflow([respuestaDelBot,'Respuesta'], '', '', '');
             res.send(responseDataSi);
         }
 
