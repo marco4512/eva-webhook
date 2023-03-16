@@ -11,7 +11,7 @@ import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js';
 import { formatResponseForDialogflow } from './DialogFlowFunctions/Response.js';
 import { AgregarNuevaPregunta } from "./Sheet/SheetFunctions.js";
 import { ResponderConUnSi } from "./Sheet/SheetFunctions.js";
-import { ResponderConUnNo,SubirUnTiket } from "./Sheet/SheetFunctions.js";
+import { ResponderConUnNo, SubirUnTiket, ExtraerEstado } from "./Sheet/SheetFunctions.js";
 //Para iniciar en el entorno local
 const port = process.env.PORT || 3000;
 // for parsing json
@@ -96,9 +96,45 @@ app.post("/SolicitarTiket", express.json(), (req, res) => {
         }
 
         Promise.all([SubirUnTiket(nombre, Problema, correo, asesor, status)]).then(id => {
-            let responseDataSi = formatResponseForDialogflow(['Listo, tu Numero de Tiket es el siguiente',id], '', '', '');
+            let responseDataSi = formatResponseForDialogflow(['Listo, tu Numero de Tiket es el siguiente', id], '', '', '');
             res.send(responseDataSi);
         })
+    })
+})
+app.post("/EstadoTicket", express.json(), (req, res) => {
+    let tag = req.body.fulfillmentInfo.tag
+    let pregunta = req.body.text;
+    let Parametros = req.body['sessionInfo']['parameters'];
+    console.log('Request del dialog', req.body)
+    console.log(tag)
+    console.log(Parametros)
+    let idTiket = Parametros['idTiket']
+    Promise.all([ExtraerEstado(idTiket)]).then(tiket => {
+        let respuestaDelBot;
+        if (tiket.length != 0) {
+            let Nombre = tiket['Nombre']
+            let asesor = tiket['Asesor']
+            let status = tiket['Status']
+            let problema = tiket['Problema']
+            switch (status) {
+                case 'Pendiente':
+                    respuestaDelBot = `Hola ${Nombre} Por el momento tu asesor ${asesor} 
+                                esta por resolver  tu problema :'${problema} `;
+                    break
+                case 'EnProceso':
+                    respuestaDelBot = `Hola ${Nombre} Por el momento tu asesor ${asesor} 
+                                esta resolviendo  tu problema :'${problema} `;
+                    break
+                case 'Resuelto':
+                    respuestaDelBot = `Hola ${Nombre} tu asesor ${asesor} 
+                    ya  resolvio  tu problema :'${problema} `;
+            }
+        }else{
+            respuestaDelBot = `No encuentro el tiket con numero ${idTiket}`;
+        }
+
+        let responseDataSi = formatResponseForDialogflow([respuestaDelBot], '', '', '');
+        res.send(responseDataSi);
     })
 })
 app.listen(port, () => {
