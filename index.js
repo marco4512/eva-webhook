@@ -110,7 +110,7 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
     console.log(Parametros)
     let idTiket = Parametros['idtiket']
     Promise.all([ExtraerEstado(idTiket)]).then(tiket => {
-        console.log('entramos aqui')
+        console.log('entramos aqui',tiket)
         let respuestaDelBot;
         if (tiket.length != 0) {
             let Nombre = tiket['Nombre']
@@ -130,12 +130,14 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
                     respuestaDelBot = `Hola ${Nombre} tu asesor ${asesor} 
                     ya  resolvio  tu problema :'${problema} `;
             }
+            let responseDataSi = formatResponseForDialogflow([respuestaDelBot], '', '', '');
+            res.send(responseDataSi);
         }else{
             respuestaDelBot = `No encuentro el tiket con numero ${idTiket}`;
+            let responseDataSi = formatResponseForDialogflow([respuestaDelBot], '', '', '');
+            res.send(responseDataSi);
         }
 
-        let responseDataSi = formatResponseForDialogflow([respuestaDelBot], '', '', '');
-        res.send(responseDataSi);
     })
 })
 app.listen(port, () => {
