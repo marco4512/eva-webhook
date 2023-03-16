@@ -1,5 +1,5 @@
 import express from "express";
-
+import bodyParser from "body-parser";
 import { extraerAsesor } from "./fireBaseFunctios/firebaseFunction.js";
 import { openai_response } from "./openAi/openAi_API.js"
 const app = express();
