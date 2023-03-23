@@ -141,6 +141,14 @@ app.post("/EstadoTicket", express.json(), (req, res) => {
         res.send(responseDataSi);
     })
 })
+app.post("/consultarTiket", express.json(), (req, res) => {
+    let tag = req.body.fulfillmentInfo.tag
+    let pregunta = req.body.text;
+    let Parametros = req.body['sessionInfo']['parameters'];
+    console.log('Request del dialog', req.body)
+    console.log(tag)
+    console.log(Parametros)
+})
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
 })
