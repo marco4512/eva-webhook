@@ -147,8 +147,42 @@ app.post("/consultarTiket", express.json(), (req, res) => {
     let Parametros = req.body['sessionInfo']['parameters'];
     console.log('Request del dialog', req.body)
     console.log(tag)
-    console.log(Parametros)
+    let NumeroTiket = Parametros['numerodetiket'];
+    Promise.all([ExtraerEstado(NumeroTiket)]).then(tiket => {
+        console.log('entramos aqui', tiket)
+        let respuestaDelBot;
+        try {
+            console.log('entrando al if')
+            let tiket2 = JSON.parse(tiket)
+            let Nombre = tiket2['Nombre']
+            let asesor = tiket2['Asesor']
+            let status = tiket2['Status']
+            let problema = tiket2['Problema']
+            console.log('estatus',)
+            switch (status) {
+                case 'Pendiente':
+                    respuestaDelBot = `Hola ${Nombre} Por el momento tu asesor ${asesor} 
+                                esta por resolver  tu problema " ${problema}" Gracias por tu espera `;
+                    console.log(' vamos a enviar esto', respuestaDelBot, typeof (respuestaDelBot))
+                    break
+                case 'EnProceso':
+                    respuestaDelBot = `Hola ${Nombre} Por el momento tu asesor ${asesor} 
+                                esta resolviendo  tu problema  "${problema} "`;
+                    break
+                case 'Resuelto':
+                    respuestaDelBot = `Hola ${Nombre} tu asesor ${asesor} 
+                    ya  resolvio  tu problema "${problema}" `;
+            }
+        } catch (e) {
+            respuestaDelBot = `No encuentro el tiket con numero ${NumeroTiket}`;
+        }
+        let responseDataSi = formatResponseForDialogflow([String(respuestaDelBot)], '', '', '');
+        res.send(responseDataSi);
+    })
+
+
 })
+
 app.listen(port, () => {
     console.log(`Escuchando peticiones en el puerto ${port}`);
 })
