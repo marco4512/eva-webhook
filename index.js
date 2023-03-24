@@ -92,7 +92,7 @@ app.post("/SolicitarTiket", express.json(), (req, res) => {
         if (resultado.flat().length != 0) {
             asesor = resultado.flat()[0]
         } else {
-            asesor = 'No se tiene asesor';
+            asesor = '_';
         }
 
         Promise.all([SubirUnTiket(nombre, Problema, correo, asesor, status)]).then(id => {
