@@ -1,12 +1,14 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { extraerAsesor } from "./fireBaseFunctios/firebaseFunction.js";
-import { openai_response } from "./openAi/openAi_API.js"
 const app = express();
+/*
+import { openai_response } from "./openAi/openAi_API.js"
 import { WebhookClient } from 'dialogflow-fulfillment';
 import { async } from "@firebase/util";
 import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, collection, CACHE_SIZE_UNLIMITED } from "firebase/firestore";
-import { db } from "./fireBaseFunctios/firebase.js";
+import { db } from "./fireBaseFunctios/firebase.js";*/
+
 import { ResponderPreguta } from './fireBaseFunctios/consultarQuestions.js';
 import { formatResponseForDialogflow } from './DialogFlowFunctions/Response.js';
 import { AgregarNuevaPregunta } from "./Sheet/SheetFunctions.js";
@@ -31,6 +33,12 @@ app.use(
 app.get("/", (req, res) => {
     return res.send("Chatbot Funcionando 🤖🤖🤖 ");
 });
+
+app.post("/RespuestaBasica", express.json(), (req, res) => {
+    let responder = formatResponseForDialogflow(['Respuesta desde el back'], '', '', '');
+    res.send(responder);
+})
+
 /**Desde Aqui recibimos las peticiones de dialogFlow */
 app.post("/webhook", express.json(), (req, res) => {
     let tag = req.body.fulfillmentInfo.tag
