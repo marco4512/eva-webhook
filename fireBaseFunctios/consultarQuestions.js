@@ -1,27 +1,22 @@
 import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, collection } from "firebase/firestore";
 import { db } from "./firebase.js";
-import { Configuration, OpenAIApi } from "openai";
-import {crear_variaciones} from "../BuscarSinonimo.js";
-const configuration = new Configuration({
-    apiKey: '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',
-});
-const openai = new OpenAIApi(configuration);
-
+import { crear_variaciones } from "../BuscarSinonimo.js";
+import { openai_response } from "../openAi/openAi_API.js";
 
 async function ResponderPreguta(pregunta) {
     const palabrasClave = ['gmail', 'drive', 'maps', 'docs', 'sheet', 'youtube',
-    'cloud', 'chrome', 'meet', 'calendario', 'formularios', 'formulario']
-    
+        'cloud', 'chrome', 'meet', 'calendario', 'formularios', 'formulario']
+
     let newFormatQuestion = String(pregunta).toLocaleLowerCase().replace('?', '').replace('¿', '').trim()
     let pregunta_separada = String(newFormatQuestion).split(' ')
     let categoria = []
-    var newQuestion = {};
-    var respuesta='';
+    var respuesta = '';
     pregunta_separada.map(function (palabra) {
         if (palabrasClave.includes(palabra)) {
             categoria.push(palabra)
         }
     })
+
     if (categoria.length != 0) {
         let documento = categoria[0]
         const docRef = doc(db, "Questions", documento);
@@ -31,50 +26,33 @@ async function ResponderPreguta(pregunta) {
             console.log('si extiste')
             console.log(newFormatQuestion)
             if (docSnap.data()[newFormatQuestion] != undefined) {
-                respuesta=docSnap.data()[newFormatQuestion]
-                console.log(docSnap.data()[newFormatQuestion])
+                respuesta = docSnap.data()[newFormatQuestion]
+                return respuesta;
             }
             else {
-                const response = await openai.createCompletion({
-                    model: "text-davinci-003",
-                    prompt: `Q:${newFormatQuestion}
-                       A:`,
-                    temperature: 0,
-                    max_tokens: 400,
-                    top_p: 1,
-                    frequency_penalty: 0,
-                    presence_penalty: 0,
-                    stop: ["Q:"],
-                });
-
-                respuesta= response.data.choices[0].text
-                crear_variaciones(pregunta, respuesta, documento)
-                //newQuestion[newFormatQuestion] = response.data.choices[0].text
-                //await updateDoc(doc(questionRef,documento), newQuestion);
-                console.log('agregar a gmail')
+                return Promise.all([openai_response(newFormatQuestion)]).then(response => {
+                    respuesta = response[0] != undefined ? response[0] : 'No pude procesar tu pregunta'
+                    crear_variaciones(pregunta, respuesta, documento)
+                    console.log('Se agrego a una existente')
+                    return respuesta
+                })
             }
         } else {
             console.log('No esta, tenemos que crearlo')
-            const response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt: `Q:${newFormatQuestion}
-                   A:`,
-                temperature: 0,
-                max_tokens: 400,
-                top_p: 1,
-                frequency_penalty: 0,
-                presence_penalty: 0,
-                stop: ["Q:"],
-            });
-            respuesta=response.data.choices[0].text;
-            crear_variaciones(pregunta, respuesta, documento)
-            //newQuestion[newFormatQuestion] = response.data.choices[0].text;
-            //await setDoc(doc(db, "Questions", documento), newQuestion)
+            return Promise.all([openai_response(newFormatQuestion)]).then(response => {
+                respuesta = response[0] != undefined ? response[0] : 'No pude procesar tu pregunta'
+                crear_variaciones(pregunta, respuesta, documento)
+                console.log('Se agrego a una nueva')
+                return respuesta
+            })
         }
-    }else{
-        respuesta='Lo lamento no se responder eso, solo estoy enfocado en google'
+    } else {
+        return 'Lo lamento no se responder eso, solo estoy enfocado en google'
     }
-    return respuesta;
 }
-export{ResponderPreguta}
-//ResponderPreguta('que es google drive?')
+export { ResponderPreguta }
+Promise.all([ResponderPreguta('como abro maps?')]).then(res => {
+    console.log('respuesta->', res)
+}
+)
+

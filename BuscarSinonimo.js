@@ -1,27 +1,15 @@
-import { Configuration, OpenAIApi } from "openai";
 import { doc, getDoc, setDoc, query, where, updateDoc, getDocs, getFirestore, collection } from "firebase/firestore";
 import { db } from "./fireBaseFunctios/firebase.js";
-import { async } from "@firebase/util";
-const configuration = new Configuration({
-    apiKey: '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',
-});
-
-const openai = new OpenAIApi(configuration);
+import { openai_response } from './openAi/openAi_API.js'
 
 async function sinonimosDesdeOpen(verbo) {
     var pregunta = "Convierte a codigo: un string separado por comas sin nombre de variable con todos los sinonimos en infinitivo de la palabra " + '"' + verbo + '"' + " en minuscula,sin acentos, sin comillas y sin corchetes."
-    const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: pregunta,
-        temperature: 0,
-        max_tokens: 100,
-        top_p: 1,
-        frequency_penalty: 0.2,
-        presence_penalty: 0,
-    });
-    var salidaFinal = response.data.choices[0].text.trim().replaceAll('"', '').split(',')
-    let formateado = salidaFinal.map(palabra => palabra.trim().toLowerCase())
-    return formateado;
+    let formateado;
+    return Promise.all([openai_response(pregunta)]).then(respuesta => {
+        var salidaFinal = respuesta[0].trim().replaceAll('"', '').split(',')
+        formateado = salidaFinal.map(palabra => palabra.trim().toLowerCase())
+        return formateado
+    })
 }
 
 function extraerSinonimos(palabra) {
@@ -36,12 +24,13 @@ function crear_variaciones(fraseInicial, respuestaDeOpen, tema) {
     var preguntas = ['que', 'como', 'quien', 'quienes', 'cuales', 'cuando', 'cuanto', 'donde', 'porque', 'por']
     var variantes = [];
     separarFrase.map(function (parte) {
+        //console.log('La parte ',parte)
         if (!preguntas.includes(parte) && parte.length > 3) {
             let primeraLetra = parte.charAt(0)
             buscar_en_FireBase_El_Sinonimo(primeraLetra, parte).then(respuesta => {
                 //console.log(typeof(respuesta))
                 if (respuesta == 'No existe palabra') {
-                    console.log(parte)
+                    //console.log('No existe la palabra')
                     extraerSinonimos(parte).then(arreglo => {
                         ingresar_nueva_palabra(primeraLetra, parte, arreglo);
                         let salidaDiferentes = [fraseformateada];
@@ -56,11 +45,12 @@ function crear_variaciones(fraseInicial, respuestaDeOpen, tema) {
                         salidaDiferentes.map(function (frase) {
                             allResults[frase] = respuestaDeOpen
                         })
-                        ingresar_en_question(allResults,tema)
-                       
+                        ingresar_en_question(allResults, tema)
+
                     })
                 }
                 if (respuesta == 'No existe documento') {
+                    //console.log('No existe el documento')
                     extraerSinonimos(parte).then(arreglo => {
                         ingresar_nuevo_documento(primeraLetra, parte, arreglo);
                         let salidaDiferentes = [fraseformateada];
@@ -75,7 +65,7 @@ function crear_variaciones(fraseInicial, respuestaDeOpen, tema) {
                         salidaDiferentes.map(function (frase) {
                             allResults[frase] = respuestaDeOpen
                         })
-                        ingresar_en_question(allResults,tema)
+                        ingresar_en_question(allResults, tema)
                     })
                 }
                 if (typeof (respuesta) == 'object') {
@@ -83,8 +73,6 @@ function crear_variaciones(fraseInicial, respuestaDeOpen, tema) {
                     respuesta.map(function (variantes) {
                         var nueva = variantes.replaceAll(';', '')
                         var auxString = fraseformateada;
-                        //console.log(auxString.replaceAll(parte,nueva));
-                        //console.log(auxString,parte,nueva)
                         if (!salidaDiferentes.includes(auxString.replaceAll(parte, nueva))) {
                             salidaDiferentes.push(auxString.replaceAll(parte, nueva));
                         }
@@ -93,21 +81,22 @@ function crear_variaciones(fraseInicial, respuestaDeOpen, tema) {
                     salidaDiferentes.map(function (frase) {
                         allResults[frase] = respuestaDeOpen
                     })
-                    ingresar_en_question(allResults,tema)
+                    ingresar_en_question(allResults, tema)
                 }
             })
         }
     })
 
 }
-async function ingresar_en_question(allData,tema) {
+async function ingresar_en_question(allData, tema) {
     const docRef = doc(db, "Questions", tema);
     const questionRef = collection(db, "Questions");
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
         await updateDoc(doc(questionRef, tema), allData);
-    }else{
+    } else {
         await setDoc(doc(db, "Questions", tema), allData);
+        await updateDoc(doc(questionRef, tema), allData);
     }
 
 }
@@ -141,7 +130,10 @@ async function buscar_en_FireBase_El_Sinonimo(primeraLetra, palabra) {
         return 'No existe documento'
     }
 }
-//extraerSinonimos('acceder').then(x=>{console.log(x)})
+
+//extraerSinonimos('acceder').then(x => { console.log(x) })
+
 //crear_variaciones('¿Cómo accedo a maps?', 'Para ingresar a Maps, puedes abrir el navegador web de tu preferencia y escribir en la barra de direcciones "maps.google.com". Esto te llevará a la página principal de Google Maps. Si tienes una cuenta de Google, puedes iniciar sesión para guardar tus ubicaciones favoritas y obtener recomendaciones personalizadas.', 'maps')
-export{crear_variaciones}
+
+export { crear_variaciones }
 //console.log(jsonSinonimos)
