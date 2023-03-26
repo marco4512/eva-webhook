@@ -51,8 +51,8 @@ async function ResponderPreguta(pregunta) {
     }
 }
 export { ResponderPreguta }
-Promise.all([ResponderPreguta('como abro maps?')]).then(res => {
+/*Promise.all([ResponderPreguta('como abro maps?')]).then(res => {
     console.log('respuesta->', res)
 }
-)
+)*/
 
