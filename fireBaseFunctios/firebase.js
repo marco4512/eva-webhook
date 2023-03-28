@@ -2,8 +2,8 @@ import { initializeApp } from "firebase/app";
 import {addDoc,getFirestore} from "firebase/firestore";
 import 'firebase/compat/firestore';
 const firebaseConfig = {
-  apiKey: "AIzaSyCrid3kDB_v3mczgBkrwVy6kOPO2R4-CY4",
-  authDomain: "basededialogflow.firebaseapp.com",
+  apiKey: "",
+  authDomain: "..com",
   projectId: "basededialogflow",
   storageBucket: "basededialogflow.appspot.com",
   messagingSenderId: "82826287339",
